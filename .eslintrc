@@ -1,0 +1,61 @@
+{
+  "parser": "babel-eslint",
+  "extends": "airbnb",
+   "rules": {
+     "arrow-body-style": 0,
+     "block-spacing": "warn",
+     "brace-style": "warn",
+     "comma-spacing": "warn",
+     "comma-dangle": [2, "never"],
+     "consistent-return": 0,
+     "curly": ["warn", "multi-line"],
+     "eol-last": 0,
+     "func-names": 0,
+     "import/no-unresolved": 0,
+     "indent": "warn",
+     "max-len": 0,
+     "newline-per-chained-call": 0,
+     "no-case-declarations": 0,
+     "no-debugger": 0,
+     "no-else-return": 0,
+     "no-nested-ternary": 0,
+     "no-param-reassign": 0,
+     "no-restricted-syntax": 0,
+     "no-trailing-spaces": 0,
+     "no-underscore-dangle": 0,
+     "no-unused-vars": "warn",
+     "no-use-before-define": 0,
+     "object-curly-spacing": "warn",
+     "object-shorthand": "warn",
+     "padded-blocks": 0,
+     "prefer-arrow-callback": "warn",
+     "prefer-template": "warn",
+     "quotes": "warn",
+     "radix": 0,
+     "react/jsx-indent": "warn",
+     "react/jsx-indent-props": "warn",
+     "react/no-multi-comp": 0,
+     "react/prefer-stateless-function": 0,
+     "react/prop-types": 0,
+     "react/sort-comp": 0,
+     "semi": 0,
+     "space-before-function-paren": 0,
+     "space-in-parens": "warn",
+     "space-infix-ops": "warn",
+     "template-curly-spacing": "warn"
+   },
+   "env": {
+     "es6": true,
+     "browser": true
+   },
+   "ecmaFeatures": {
+     "experimentalObjectRestSpread": true
+   },
+   "globals": {
+     "__IS_BROWSER__": true,
+     "it": true,
+     "describe": true,
+     "afterEach": true,
+     "beforeEach": true
+   }
+}
