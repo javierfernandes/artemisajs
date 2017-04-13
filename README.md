@@ -5,7 +5,7 @@ React/Redux data fetching library
 
 Artemisa extends React+Redux with the ability to model interaction with the backend (aka fetches) in a declarative way, reducing boilerplate code and providing a framework with (potential) functionality on the local storage and sync of the data with the back (cache).
 
-It is highliy influenced by ApolloJS, the graphql client (for react specifically). 
+It is highliy influenced by [Apollo](http://dev.apollodata.com/react/), the graphql client (for react specifically). 
 
 In the future it can have LRU cache, and also expiration handling, etc
 
@@ -164,7 +164,7 @@ const MyComponentWithFetches = fetchingData({
 ```
 So it will only call the fetch if there is a city in the state.
 
-> // THIS CURRENTLY DOES NOT SUPPORT USING PROPS (UPDATING WHEN PROPS CHANGE)
+> THIS CURRENTLY DOES NOT SUPPORT USING PROPS (UPDATING WHEN PROPS CHANGE) !!!
 
 # Slot
 
