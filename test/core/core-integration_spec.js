@@ -2,14 +2,14 @@ import expect from 'expect';
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import nock from 'nock';
-import { dataService } from '../../../src/util/api/api-service'
-import { call } from '../../../src/util/api/api-call'
-import { ApiCallType } from '../../../src/util/api/api-actions'
+import { dataService } from 'core/service'
+import { call } from 'core/call'
+import { ApiCallType } from 'core/actions'
 
 const middlewares = [thunk, dataService];
 const mockStore = configureMockStore(middlewares);
 
-describe('Api Service - Integration Tests', () => {
+describe('Core Service - Integration Tests', () => {
 
   beforeEach(() => {
     nock('http://artemisajs.org/')
@@ -27,10 +27,10 @@ describe('Api Service - Integration Tests', () => {
       .reply(200, [{ status: 'ok' }])
 
     return dispatchAndAssert(
-      { type: 'GET_TOPOLOGY', dataApiCall: call('POST', 'todoItem') },
+      { type: 'GET_WEATHER', dataApiCall: call('POST', 'todoItem') },
       (actions) =>
         expect(actions.find(
-           a => a.type === 'GET_TOPOLOGY_REQUEST' && a.apiCallType === ApiCallType.REQUEST)
+           a => a.type === 'GET_WEATHER_REQUEST' && a.apiCallType === ApiCallType.REQUEST)
         ).toExist()
     )
   })

@@ -1,19 +1,19 @@
 import React from 'react'
-import configureMockStore from 'redux-mock-store';
+import configureMockStore from 'redux-mock-store'
 import { createStore, combineReducers, applyMiddleware, compose } from 'redux'
 import { Provider } from 'react-redux'
-import thunk from 'redux-thunk';
-import nock from 'nock';
+import thunk from 'redux-thunk'
+import nock from 'nock'
 import expect from 'expect'
 import { mount, shallow } from 'enzyme'
 
-import { fetchingData, isArtemisaReceive } from 'util/api/artemisa-hoc'
-import { artemisa } from 'reducer'
-import { dataService } from 'util/api/api-service'
-import { get, auth } from 'util/api/api-call'
+import { fetchingData, isArtemisaReceive } from 'artemisa/component'
+import { artemisa } from 'artemisa/reducer'
+import { dataService } from 'core/service'
+import { get, auth } from 'core/call'
 
-const middlewares = [thunk, dataService];
-const mockStore = configureMockStore(middlewares);
+const middlewares = [thunk, dataService]
+const mockStore = configureMockStore(middlewares)
 
 class MyComponent extends React.Component {
   render() {

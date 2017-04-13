@@ -1,5 +1,5 @@
 import expect from 'expect';
-import { artemisa } from 'reducer';
+import { artemisa } from 'artemisa/reducer';
 
 describe('Artemisa reducer', () => {
 

@@ -1,19 +1,19 @@
 import expect from 'expect';
-import { call, get, post } from '../../../src/util/api/api-call'
+import { call, get, post } from 'core/call'
 
-describe('Api Service', () => {
+describe('Core calls factory', () => {
 
   it('call() creates a simple get call spec', () => {
-    expect(call('GET', 'topology')).toEqual({
+    expect(call('GET', 'weather/bsas')).toEqual({
       method: 'GET',
-      path: 'topology'
+      path: 'weather/bsas'
     })
   })
 
   it('get() creates a simple GET call spec', () => {
-    expect(get('topology')).toEqual({
+    expect(get('weather/bsas')).toEqual({
       method: 'GET',
-      path: 'topology'
+      path: 'weather/bsas'
     })
   })
 

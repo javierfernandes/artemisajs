@@ -1,28 +1,29 @@
 import expect from 'expect';
-import { fetchAndSet, State, withFetchs } from '../../../src/util/api/api-reducer'
-import { ApiCallType } from '../../../src/util/api/api-actions'
+import { State } from 'core/model'
+import { fetchAndSet, withFetchs } from 'core/reducer'
+import { ApiCallType } from 'core/actions'
 
-describe('Api Reducers', () => {
+describe('Core Reducer', () => {
 
   const dummyReducer = (state) => state
 
   describe('simple reducer decoration', () => {
 
     it('Should bypass any action without initial state', () => {
-      const reducer = fetchAndSet(dummyReducer, 'topology');
+      const reducer = fetchAndSet(dummyReducer, 'weather');
       const state = reducer({}, {})
       expect(state).toEqual({})
     })
 
     it('Should bypass any action that is not a request', () => {
-      const reducer = fetchAndSet(dummyReducer, 'topology');
+      const reducer = fetchAndSet(dummyReducer, 'weather');
       const state = reducer({ a: 'a' }, {})
       expect(state).toEqual({ a: 'a' })
     })
 
     it('Should set as FETCHING if it is a REQUEST action', () => {
       const originType = 'originAction'
-      const reducer = fetchAndSet(dummyReducer, originType, 'topology');
+      const reducer = fetchAndSet(dummyReducer, originType, 'weather');
 
       const action = {
         originType,
@@ -33,7 +34,7 @@ describe('Api Reducers', () => {
       const state = reducer({ a: 'a' }, action)
       expect(state).toEqual({
         a: 'a',
-        topology: {
+        weather: {
           state: State.FETCHING,
           path: undefined
         }
@@ -42,17 +43,17 @@ describe('Api Reducers', () => {
 
     it('Should set as FETCHED if it is a RECEIVE action', () => {
       const originType = 'originAction'
-      const aTopology = { topo: 'blah' }
+      const aWeather = { weath: '25' }
 
-      const reducer = fetchAndSet(dummyReducer, originType, 'topology');
-      const action = { originType, type: 'GET_TOPOLOGY_RECEIVE', apiCallType: ApiCallType.RECEIVE, data: aTopology }
+      const reducer = fetchAndSet(dummyReducer, originType, 'weather');
+      const action = { originType, type: 'GET_WEATHER_RECEIVE', apiCallType: ApiCallType.RECEIVE, data: aWeather }
 
       const state = reducer({ a: 'a' }, action)
       expect(state).toEqual({
         a: 'a',
-        topology: {
+        weather: {
           state: State.FETCHED,
-          value: aTopology,
+          value: aWeather,
           path: undefined
         }
       })
@@ -62,13 +63,13 @@ describe('Api Reducers', () => {
       const originType = 'originAction'
       const anError = { message: 'some error' }
 
-      const reducer = fetchAndSet(dummyReducer, originType, 'topology');
-      const action = { originType, type: 'GET_TOPOLOGY_RECEIVE', apiCallType: ApiCallType.ERROR, error: anError }
+      const reducer = fetchAndSet(dummyReducer, originType, 'weather');
+      const action = { originType, type: 'GET_WEATHER_RECEIVE', apiCallType: ApiCallType.ERROR, error: anError }
 
       const state = reducer({ a: 'a' }, action)
       expect(state).toEqual({
         a: 'a',
-        topology: {
+        weather: {
           state: State.ERROR,
           error: anError,
           path: undefined
@@ -89,7 +90,7 @@ describe('Api Reducers', () => {
 
       const initialState = { a: 'a' }
 
-      const reducer = fetchAndSet(dummyReducer, 'get topology', 'topology')
+      const reducer = fetchAndSet(dummyReducer, 'get weather', 'weather')
 
       const state = reducer(initialState, action)
       expect(state).toEqual(initialState)
@@ -164,4 +165,3 @@ describe('Api Reducers', () => {
   })
 
 })
-

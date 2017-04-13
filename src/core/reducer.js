@@ -1,26 +1,9 @@
-import { ApiCallType } from './api-actions'
+import { isDerivedActionFor, isRequest, isReceive, isError } from 'core/actions'
+import { State, isFetchingSlot, isFetchedSlot } from 'core/model'
 
 export const identityWithInitial = initial => state => state || initial
 
 export const identity = (state = {}) => state
-
-export const State = {
-  FETCHING: 'fetching',
-  FETCHED: 'fetched',
-  ERROR: 'error'
-}
-const isDerivedActionFor = (action, apiActionType) => action.originType === apiActionType
-
-const isApiCall = expected => action => action.apiCallType === expected
-export const isRequest = isApiCall(ApiCallType.REQUEST)
-export const isReceive = isApiCall(ApiCallType.RECEIVE)
-export const isError = isApiCall(ApiCallType.ERROR)
-
-// checking value
-export const isFetchingSlot = slot => isInStateSlot(slot, State.FETCHING)
-export const isFetchedSlot = slot => isInStateSlot(slot, State.FETCHED)
-export const isErrorSlot = slot => isInStateSlot(slot, State.ERROR)
-export const isInStateSlot = (slot, state) => slot && slot.state === state
 
 // checking state
 export const isFetching = (state, stateProperty) => isFetchingSlot(state[stateProperty])

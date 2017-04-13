@@ -1,34 +1,27 @@
-import isoFetch from 'isomorphic-fetch';
-import merge from 'deepmerge';
+import isoFetch from 'isomorphic-fetch'
+import merge from 'deepmerge'
 
 // HARDCODED: this should be configurable !
-export const LOGOUT = 'LOGOUT';
+export const LOGOUT = 'LOGOUT'
 
-function isBrowser() {
-  return typeof __IS_BROWSER__ !== typeof undefined;
-}
-
-function getBrowserUrl(url) {
-  return `${location.protocol}//${location.host}/${url}`;
-}
+const isBrowser = () => typeof __IS_BROWSER__ !== typeof undefined
+const getBrowserUrl = (url) => `${location.protocol}//${location.host}/${url}`
 
 export function apiFetch(url, options) {
-  const finalUrl = isBrowser() ? getBrowserUrl(url) : `http://artemisajs.org/${url}`;
-  return isoFetch(finalUrl, options);
+  const finalUrl = isBrowser() ? getBrowserUrl(url) : `http://artemisajs.org/${url}`
+  return isoFetch(finalUrl, options)
 }
 
-export function compileUrl(path, params = {}) {
-  return (typeof(path) === 'string') ? path : path(params);
-}
+export const compileUrl = (path, params = {}) => (typeof(path) === 'string') ? path : path(params)
 
 export function fetchOptions(method = 'GET', params = {}, authToken) {
-  let headers = {};
-  let body = undefined;
+  let headers = {}
+  let body = undefined
   if (authToken) {
     headers = {
       ...headers,
       Authorization: `Bearer ${authToken}`
-    };
+    }
   }
   if (method === 'POST' || method === 'PUT') {
     if (params.file) {
@@ -39,17 +32,17 @@ export function fetchOptions(method = 'GET', params = {}, authToken) {
         } else {
           body.append(params[key].name, params[key].file);
         }
-      });
+      })
     } else {
       headers = {
         ...headers,
         'Content-Type': 'application/json',
         Accept: 'application/json'
-      };
-      body = JSON.stringify(params);
+      }
+      body = JSON.stringify(params)
     }
   }
-  return { method, headers, body };
+  return { method, headers, body }
 }
 
 function attachPayload(action, payloads) {
@@ -66,38 +59,37 @@ function doFetch(method, path, urlParams, body, token, actions, callbacks, actio
       if (urlParams) {
         requestAction.urlParams = urlParams;
       }
-      return requestAction;
-    };
+      return requestAction
+    }
 
-    const receive = (data) => attachPayload({ type: actions.receive, data }, actionPayloads);
-    const unauthorized = () => attachPayload({ type: actions.unauthorized }, actionPayloads);
-    const onerror = (error) => attachPayload({ type: actions.error, error }, actionPayloads);
+    const receive = (data) => attachPayload({ type: actions.receive, data }, actionPayloads)
+    const unauthorized = () => attachPayload({ type: actions.unauthorized }, actionPayloads)
+    const onerror = (error) => attachPayload({ type: actions.error, error }, actionPayloads)
 
-    dispatch(request());
+    dispatch(request())
     return apiFetch(compileUrl(path, urlParams), fetchOptions(method, body, token))
       .then(response => {
         if (!response.ok) {
           if (response.status === 401) {
-            dispatch(unauthorized());
+            dispatch(unauthorized())
           }
           return response.json().then(json => {
-            throw new Error(json.error || json.message);
-          });
+            throw new Error(json.error || json.message)
+          })
         }
-        const json = response.json()
-        return json;
+        return response.json()
       })
       .then(json => {
         dispatch(receive(callbacks.decorateResponse(json, urlParams)))
         return json
       })
       .catch(error => dispatch(onerror(error.message)))
-  };
+  }
 }
 
-export const FETCH_REQUEST = 'FETCH_REQUEST';
-export const FETCH_RECEIVE = 'FETCH_RECEIVE';
-export const FETCH_ERROR = 'FETCH_ERROR';
+export const FETCH_REQUEST = 'FETCH_REQUEST'
+export const FETCH_RECEIVE = 'FETCH_RECEIVE'
+export const FETCH_ERROR = 'FETCH_ERROR'
 
 const defaultConfig = {
   actions: {
@@ -111,11 +103,11 @@ const defaultConfig = {
     decorateResponse: (response) => response
   },
   requireAuthentication: true
-};
+}
 
 const getAuthToken = (state, config) => (
   config.requireAuthentication && state.login ? state.login.token : undefined
-);
+)
 
 export function asyncMethod(method, config) {
   return (args = {}) => (dispatch, getState) => {
@@ -131,8 +123,8 @@ export function asyncMethod(method, config) {
         finalConfig.callbacks,
         args.actionPayload
       )
-    );
-  };
+    )
+  }
 }
 
 export function asyncFetch(config) {
@@ -153,21 +145,16 @@ export function asyncFetch(config) {
           )
         )
       }
-      return Promise.resolve();
+      return Promise.resolve()
     },
-    withCreate: (createConfig) => {
-      self.create = asyncMethod('POST', merge(config, createConfig));
-      return self;
-    },
-    withUpdate: (updateConfig) => {
-      self.update = asyncMethod('PUT', merge(config, updateConfig));
-      return self;
-    },
-    withDelete: (deleteConfig) => {
-      self.delete = asyncMethod('DELETE', merge(config, deleteConfig));
-      return self;
+    withMethod: method => (name, createConfig) => {
+      self[name] = asyncMethod(method, merge(config, createConfig));
+      return self
     }
-  };
+  }
+  self.withCreate = self.withMethod('create', 'POST')
+  self.withUpdate = self.withMethod('update', 'PUT')
+  self.withDelete = self.withMethod('delete', 'DELETE')
 
-  return self;
+  return self
 }

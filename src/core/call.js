@@ -9,7 +9,6 @@
  * @param urlParams
  * @param body
  * @param token
- *
  * requiresAuthentication: boolean
  */
 export const call = (method, path, urlParams, body, token) => {
@@ -30,5 +29,5 @@ export const post = (path, body) => ({ method: 'POST', path, body })
 // to use it like
 //
 //  @auth
-//  fetchTopology(device) { ... }
+//  fetchWeather(city) { ... }
 export const auth = (aCall) => ({ ...aCall, requiresAuthentication: true })

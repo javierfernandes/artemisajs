@@ -1,5 +1,5 @@
-import { storagePropertyNameForAction, isArtemisaAction } from 'util/api/artemisa-hoc'
-import { processApiAction } from 'util/api/api-reducer'
+import { storagePropertyNameForAction, isArtemisaAction } from 'artemisa/component'
+import { processApiAction } from 'core/reducer'
 
 //
 // TODO: 

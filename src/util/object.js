@@ -1,7 +1,6 @@
 export const isEmpty = (obj = {}) => !Object.getOwnPropertyNames(obj).length;
 export const values = (obj = {}) => Object.keys(obj).reduce((y, z) => y.push(obj[z]) && y, []);
 
-
 export const walk = (childrenProperty, fn) => (object) => {
   const mutated = { ...fn(object) }
   const children = object[childrenProperty]
@@ -11,9 +10,7 @@ export const walk = (childrenProperty, fn) => (object) => {
   return mutated
 }
 
-const walkOverChildren = (childrenProperty, fn, children) => (
-    (children || []).map(walk(childrenProperty, fn))
-)
+const walkOverChildren = (childrenProperty, fn, children) => (children || []).map(walk(childrenProperty, fn))
 
 export const sum = (numbers, by = e => e) => numbers.reduce((acc, e) => acc + by(e), 0)
 export const average = numbers => sum(numbers) / numbers.length

@@ -5,7 +5,7 @@
   "license": "MIT",
   "author": "Javier Fernandes",
   "scripts": {
-    "test": "export NODE_PATH=./src && mocha --require test/setup.js --require jsdom-global/register --compilers js:babel-register --recursive 'test/**/*.@(js|jsx)'"
+    "test": "export NODE_PATH=./src && mocha --require jsdom-global/register --compilers js:babel-register --recursive 'test/**/*.@(js|jsx)'"
   },
   "devDependencies": {
     "babel-cli": "^6.0.0",
@@ -17,8 +17,6 @@
     "babel-preset-react": "^6.5.0",
     "babel-preset-stage-0": "^6.24.1",
     "babel-register": "^6.24.1",
-    "css-modules-require-hook": "^4.0.1 ",
-    "node-sass": "^3.4.2",
     "enzyme": "2.8.0",
     "expect": "^1.20.2",
     "mocha": "^3.2.0",
@@ -35,7 +33,6 @@
     "react-dom": "^15.3.2",
     "react-redux": "^4.4.5",
     "redux": "^3.4.0",
-    "redux-thunk": "^2.0.1",
-    "react-intl": "^2.1.5"
+    "redux-thunk": "^2.0.1"
   }
 }
