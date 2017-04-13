@@ -38,21 +38,6 @@ Then just use it (see next)
 
 React components declare data fetching needs by using Artemisa "decorator" function.
 
-If one of your component needs to fetch data from the backend you just need to:
-
-- **Wrap your component** by using the `fetchingData(options)(component)` decorator
-- Directly **receive the slot as a prop**, for example  `this.props.weather`
-
-The value that you receive is a `slot` with the following properties
-
-- **state** : `FETCHING`, `FETCHED`, `ERROR`
-- **value**: if `FETCHED` the value from the server
-- **error**: in case it is `ERROR`
-
-# Example
-
-Here is an example usage 
-
 ```javascript
 @fetchingData({
    weather: (props) => get(`/api/weather/${props.city.code}`)
@@ -85,7 +70,7 @@ The `weather` key in the options passed to `fetchingData` specifies the name of 
 
 The `arrow function` associated to the key receives the components props (plus optionally the state) and returns an specification of an http call to be performed.
 
-The component then receives a **slot** or **placeholder** with the specified property name (here `weather`)
+The component then receives a **slot** or **placeholder** with the specified property name (here `weather`).
 Artemisa provides functions to check the state of the fetch: `isFetching`, `isError`, `isFetched`.
 
 # Fetch execution and Cache 
@@ -180,6 +165,14 @@ const MyComponentWithFetches = fetchingData({
 So it will only call the fetch if there is a city in the state.
 
 > // THIS CURRENTLY DOES NOT SUPPORT USING PROPS (UPDATING WHEN PROPS CHANGE)
+
+# Slot
+
+The slot has the following properties
+
+- **state** : `FETCHING`, `FETCHED`, `ERROR`
+- **value**: if `FETCHED` the value from the server
+- **error**: in case it is `ERROR`
 
 # Further work
 
