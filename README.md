@@ -28,8 +28,6 @@ The value that you receive is a `slot` with the following properties
 
 Here is an example usage 
 
-The component
-
 ```javascript
 @fetchingData({
    weather: (props) => get(`/api/weather/${props.city.code}`)
@@ -62,11 +60,21 @@ The `weather` key in the options passed to `fetchingData` specifies the name of 
 
 The `arrow function` associated to the key receives the components props (plus optionally the state) and returns an specification of an http call to be performed.
 
-The component then receives a **slot** or **placeholder** with the specified property name (here `weather`). This is not actually the response from the server but a placeholder that models the state and workflow of fetch.
-Eventually it will have the server response, under `value`.
+The component then receives a **slot** or **placeholder** with the specified property name (here `weather`)
+Artemisa provides functions to check the state of the fetch: `isFetching`, `isError`, `isFetched`.
 
-Artemis provides functions to check the state of the fetch: `isFetching`, `isError`, `isFetched`.
+# Fetch execution and Cache 
 
+Artemisa willl update your component when one of the properties you used for the call is updated. For example the `city` in the examples.
+
+But a property change not always triggers a new fetch, and that's where Artemisa cache fits in.
+Artemisa caches the data based on the URLs.
+
+This means that **two fetches with the same URL will trigger just one actual server call**.
+This is useful to optimize server calls when:
+
+* two different components need the same data from the backend
+* the user navigates to another component and then back, having the same "state", then it won't fetch the same data again, and it will have 0 loading time.
 
 # Options
 
@@ -103,48 +111,11 @@ The FetchDescriptor type has the following form
 Where:
 
 - **name** (required): is an id that represents the fetch you are doing. Artemisa uses this to uniquely identify this kind of request. It is like "the key" to store the data in the cache. So later if you use the same key in another component they will **share the state** and the cache.
-- **call** (required): a function for creating a Call action object. This object is exactly the same as used by `api-fetch`. For example those that are created by using the factory functions in `api-calls`  `auth(get('weather/${city}'))`.
+- **call** (required): a function for creating a Call action object.
 - (optionally other properties to be explained later on this doc)
 
 The call function is the most important and it is where you create the call to the backend. 
 As the call could depend on other properties you receive the props and as you could also want something from the state, you also get the state as a second parameter
-
-# Shortcuts
-
-The `withFeches()` decorating function supports the following "shortcuts"
-
-1) no need to use "name"
-
-So instead of writing this
-
-```javascript
-const MyComponentWithFetches = fetchingData({
-  weather: {
-    name: 'weather',      // key to use on store for cache, now optional
-    call: (props, state) => auth(get('getWeather'))
-  }
-})(MyComponent)
-```
-
-You can write this
-
-```javascript
-const Component = fetchingData({
-  weather: {
-    call: () => auth(get('getWeather'))
-  }
-})(SimpleComponent)
-```
-
-Avoiding the "name", will use the same key as property name for the store.
-
-2) Passing just the call function
-
-```javascript
-const Component = fetchingData({
-  weather: () => auth(get('getWeather'))
-})(SimpleComponent)
-```
 
 # Optional fetch properties
 
