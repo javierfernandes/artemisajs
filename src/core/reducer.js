@@ -1,5 +1,5 @@
-import { isDerivedActionFor, isRequest, isReceive, isError } from 'core/actions'
-import { State, isFetchingSlot, isFetchedSlot } from 'core/model'
+import { isDerivedActionFor, isRequest, isReceive, isError } from './actions'
+import { State, isFetchingSlot, isFetchedSlot } from './model'
 
 export const identityWithInitial = initial => state => state || initial
 

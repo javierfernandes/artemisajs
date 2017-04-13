@@ -12,7 +12,7 @@ export function apiFetch(url, options) {
   return isoFetch(finalUrl, options)
 }
 
-export const compileUrl = (path, params = {}) => (typeof(path) === 'string') ? path : path(params)
+export const compileUrl = (path, params = {}) => (typeof(path) === 'string' ? path : path(params))
 
 export function fetchOptions(method = 'GET', params = {}, authToken) {
   let headers = {}

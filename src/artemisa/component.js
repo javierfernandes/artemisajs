@@ -1,9 +1,10 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { State, isInStateSlot } from 'core/model'
-import { isReceive } from 'core/actions'
-import { shouldFetch } from 'core/reducer'
-import { isFunction, trueFn, identity } from 'util/object'
+
+import { State, isInStateSlot } from '../core/model'
+import { isReceive } from '../core/actions'
+import { shouldFetch } from '../core/reducer'
+import { isFunction, trueFn, identity } from '../util/object'
 export const ARTEMISA = 'ARTEMISA'
 
 export const isArtemisaType = type => type.indexOf(ARTEMISA) === 0
