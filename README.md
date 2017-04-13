@@ -9,6 +9,31 @@ It is highliy influenced by ApolloJS, the graphql client (for react specifically
 
 In the future it can have LRU cache, and also expiration handling, etc
 
+# Usage 
+
+```bash
+yarn add artemisa
+```
+Or
+
+```bash
+npm install -S artemisa
+```
+
+Then you must include Artemisa **middleware** and **reducer** into Redux store
+
+```
+import { service, reducer } from 'artemisa'
+
+const reducers = combineReducers([reducer, ...yourReducers])
+const store = createStore(
+  reducers,
+  applyMiddleware(service)
+)
+```
+
+Then just use it (see next)
+
 # How it works
 
 React components declare data fetching needs by using Artemisa "decorator" function.
@@ -75,6 +100,8 @@ This is useful to optimize server calls when:
 
 * two different components need the same data from the backend
 * the user navigates to another component and then back, having the same "state", then it won't fetch the same data again, and it will have 0 loading time.
+
+Artemisa implements the cache by using Redux store. So you can inspect the cache, by inspecting the state of the store, and redux actions.
 
 # Options
 
