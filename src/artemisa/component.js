@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import { State, isInStateSlot } from '../core/model'
 import { isReceive } from '../core/actions'
 import { shouldFetch } from '../core/reducer'
-import { isFunction, trueFn, identity } from '../util/object'
+import { isFunction, trueFn, identity } from '../util/function'
 export const ARTEMISA = 'ARTEMISA'
 
 export const isArtemisaType = type => !!type.match('ARTEMISA')
