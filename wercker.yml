@@ -6,29 +6,27 @@ build:
       name: set yarn cache
       code: |
         export YARN_CACHE=$WERCKER_CACHE_DIR/yarn
-
     - script:
       name: install dependencies
       code: |
         HOME=$YARN_CACHE yarn
-
    - script:
         name: run tests and coverage
         code: |
           yarn coverage-test
-
     - script:
         name: generate coverage report
         code: |
           yarn coverage-report
-
     - script:
         name: upload coverage report
         code: |
           yarn coverage-upload
-
-
     - script:
         name: lint
         code:
           yarn lint
+    - script:
+        name: cleanup dev dependencies
+        code: |
+          HOME=$YARN_CACHE yarn --prod
