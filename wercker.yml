@@ -20,4 +20,4 @@ build:
     - script:
         name: lint
         code:
-          yarn lint-src
+          yarn lint
