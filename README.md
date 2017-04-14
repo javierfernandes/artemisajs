@@ -39,6 +39,8 @@ Then just use it (see next)
 React components declare data fetching needs by using Artemisa "decorator" function.
 
 ```javascript
+import { fetchingData } from 'artemisajs'
+
 @fetchingData({
    weather: (props) => get(`/api/weather/${props.city.code}`)
 })
