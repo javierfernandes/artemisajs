@@ -12,10 +12,21 @@ build:
       code: |
         HOME=$YARN_CACHE yarn
 
-    - script:
-        name: run tests
+   - script:
+        name: run tests and coverage
         code: |
-          yarn test
+          yarn coverage-test
+
+    - script:
+        name: generate coverage report
+        code: |
+          yarn coverage-report
+
+    - script:
+        name: upload coverage report
+        code: |
+          yarn coverage-upload
+
 
     - script:
         name: lint
