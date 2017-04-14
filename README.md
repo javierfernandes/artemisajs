@@ -23,7 +23,7 @@ npm install -S artemisa
 Then you must include Artemisa **middleware** and **reducer** into Redux store
 
 ```javascript
-import { service, reducer } from 'artemisa'
+import { service, reducer } from 'artemisajs'
 
 const reducers = combineReducers([reducer, ...yourReducers])
 const store = createStore(
@@ -39,6 +39,8 @@ Then just use it (see next)
 React components declare data fetching needs by using Artemisa "decorator" function.
 
 ```javascript
+import { fetchingData } from 'artemisajs'
+
 @fetchingData({
    weather: (props) => get(`/api/weather/${props.city.code}`)
 })
