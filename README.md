@@ -23,7 +23,7 @@ npm install -S artemisa
 Then you must include Artemisa **middleware** and **reducer** into Redux store
 
 ```javascript
-import { service, reducer } from 'artemisa'
+import { service, reducer } from 'artemisajs'
 
 const reducers = combineReducers([reducer, ...yourReducers])
 const store = createStore(
