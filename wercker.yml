@@ -1,8 +1,8 @@
-box: node
+# http://devcenter.wercker.com/docs/containers/index.html
+box: node:6
 
 build:
-  steps:
-
+  steps:  
     - script:
       name: set yarn cache
       code: |
@@ -18,7 +18,11 @@ build:
       code: |
         HOME=$YARN_CACHE yarn
 
-   - script:
+    - maxon/npm-run:
+        name: Lint
+        script: lint
+
+    - script:
         name: run tests and coverage
         code: |
           yarn coverage-test
@@ -34,11 +38,13 @@ build:
           yarn coverage-upload
 
     - script:
-        name: lint
-        code:
-          yarn lint
-
-    - script:
         name: cleanup dev dependencies
         code: |
           HOME=$YARN_CACHE yarn --prod
+
+    - script:
+        name: echo nodejs information
+        code: |
+          echo "node version $(node -v) running"
+          echo "npm version $(npm -v) running"
+          echo "yarn version $(yarn -V) running"
