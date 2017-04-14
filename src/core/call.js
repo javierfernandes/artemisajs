@@ -11,16 +11,13 @@
  * @param token
  * requiresAuthentication: boolean
  */
-export const call = (method, path, urlParams, body, token) => {
-  const obj = {
-    method,
-    path
-  }
-  if (urlParams) { obj.urlParams = urlParams }
-  if (body) { obj.body = body }
-  if (token) { obj.token = token }
-  return obj
-}
+export const call = (method, path, urlParams, body, token) => ({
+  method,
+  path,
+  ...urlParams,
+  ...body,
+  ...token
+})
 
 export const get = (path) => ({ method: 'GET', path })
 export const post = (path, body) => ({ method: 'POST', path, body })
