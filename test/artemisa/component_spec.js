@@ -5,7 +5,7 @@ import { Provider } from 'react-redux'
 import thunk from 'redux-thunk'
 import nock from 'nock'
 import expect from 'expect'
-import { mount, shallow } from 'enzyme'
+import { mount } from 'enzyme'
 
 import { fetchingData, isArtemisaReceive } from 'artemisa/component'
 import { artemisa } from 'artemisa/reducer'
@@ -34,7 +34,7 @@ class MyComponent extends React.Component {
 const MyComponentWithFetches = fetchingData({
   weather: {
     name: 'theWeather', 
-    call: (props, state) => auth(get('getWeather'))
+    call: () => auth(get('getWeather'))
   }
 })(MyComponent)
 
@@ -66,8 +66,7 @@ describe('Artemisa fetchingData() HOC', () => {
     it('dispatches the initial action', () => {
       mount(
         <Provider store={store}>
-          <MyComponentWithFetches
-          />
+          <MyComponentWithFetches />
         </Provider>
       )
       expect(store.getActions()).toEqual([
@@ -142,7 +141,7 @@ describe('Artemisa fetchingData() HOC', () => {
         const MyComponentWithTransform = fetchingData({
           weather: {
             name: 'theWeather', 
-            call: (props, state) => auth(get('getWeather')),
+            call: () => auth(get('getWeather')),
             transforming: v => ({ temp: v.temp.toUpperCase() })
           }
         })(MyComponent)

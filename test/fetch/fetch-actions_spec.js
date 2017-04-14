@@ -200,7 +200,7 @@ describe('Asynch fetch actions', () => {
           .then(() => {
             expect(store.getActions()).toEqual([
               { type: REQUEST_ACTION, payload: thePayload },
-              { type: RECEIVE_ACTION, data: { decorated: [{ foo: 'bar' }] }}
+              { type: RECEIVE_ACTION, data: { decorated: [{ foo: 'bar' }] } }
             ])
           })
     })

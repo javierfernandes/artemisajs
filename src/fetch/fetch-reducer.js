@@ -1,9 +1,7 @@
 import {
   FETCH_REQUEST,
   FETCH_RECEIVE,
-  FETCH_ERROR,
-  // maybe customizable !?
-  LOGOUT
+  FETCH_ERROR
 } from 'fetch/fetch-actions'
 
 const initialState = {

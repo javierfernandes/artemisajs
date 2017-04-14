@@ -1,4 +1,6 @@
-# ArtemisaJS
+[![wercker status](https://app.wercker.com/status/058913f49bf3eff11fd7af9a5737dfbc/s/master "wercker status")](https://app.wercker.com/project/byKey/058913f49bf3eff11fd7af9a5737dfbc)
+# ArtemisaJS 
+
 React/Redux data fetching library
 
 # Description
