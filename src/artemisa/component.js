@@ -1,19 +1,8 @@
 import React from 'react'
 import { connect } from 'react-redux'
-
 import { State, isInStateSlot } from '../core/model'
-import { isReceive } from '../core/actions'
-import { shouldFetch } from '../core/reducer'
 import { isFunction, trueFn, identity, properties } from '../util/object'
-export const ARTEMISA = 'ARTEMISA'
-
-export const isArtemisaType = type => type.indexOf(ARTEMISA) === 0
-export const isArtemisaReceive = action => isReceive(action) && isArtemisaType(action.originType)
-export const isArtemisaAction = action => isArtemisaType(action.type)
-
-export function storagePropertyNameForAction(action) {
-  return action.originType.slice(ARTEMISA.length + 1)
-}
+import { dispatchFetches } from './dispatch'
 
 /**
  * Base class of the higher order component.
@@ -25,23 +14,7 @@ class AbstractWithFetches extends React.Component {
 
   tryToFetch() {
     const { state, dispatch } = this.props;
-    this.getFetches().forEach(fetch => {
-      this.dispatchFetch(fetch, state, dispatch)
-    })
-  }
-
-  dispatchFetch({ storeFieldName, call, on }, state, dispatch) {
-    if (!on(this.props, state)) {
-      return;
-    }
-    const action = ({
-      type: `${ARTEMISA}_${storeFieldName}`,
-      dataApiCall: call(this.props, state)
-    })
-    const should = shouldFetch(state.artemisa[storeFieldName], action.dataApiCall.path, s => s.path)
-    if (should) {
-      dispatch(action)
-    }
+    dispatchFetches(this.props, state, dispatch, this.getFetches())
   }
 
   render() {
@@ -88,6 +61,12 @@ const createFetchDescriptors = fetches => properties(fetches).map(({ name, value
   }
 ))
 
+/**
+ * Decorator function to create a React Higher-order Component wrapping
+ * your component so that Artemisa can take care of server fetches.
+ * 
+ * @param {*} fetches an object that describes one or many "fetches" as properties.
+ */
 export const fetchingData = fetches => WrappedComponent => {
   const fetchDescriptors = createFetchDescriptors(fetches)
   class WithFetches extends AbstractWithFetches {

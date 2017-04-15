@@ -1,3 +1,4 @@
+import { properties } from '../util/object'
 import { isDerivedActionFor, isRequest, isReceive, isError } from './actions'
 import { State, isFetchingSlot, isFetchedSlot } from './model'
 
@@ -44,11 +45,12 @@ export function shouldFetch(fetchState, key, keyProvider) {
 }
 
 export const withFetchs = (reducer, actionToStateMapping) => (
-  Object.keys(actionToStateMapping)
-    .reduce((red, key) =>
-      fetchAndSet(red, key, actionToStateMapping[key]), reducer
-    )
+  properties(actionToStateMapping)
+    .reduce((red, { name, value }) =>
+      fetchAndSet(red, name, value)
+    , reducer)
 )
+
 
 /**
  * Decorates a given reducer in order to intercept

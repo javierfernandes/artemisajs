@@ -1,4 +1,4 @@
-import { storagePropertyNameForAction, isArtemisaAction } from './component'
+import { storagePropertyNameForAction, isArtemisaAction } from './dispatch'
 import { processApiAction } from '../core/reducer'
 
 //
