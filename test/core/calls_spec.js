@@ -15,6 +15,15 @@ describe('Core calls factory', () => {
       expect(called.body).toEqual(undefined)
       expect(called.token).toEqual(undefined)
     })
+    it('sets body correctly', () => {
+      const called = call('POST', 'weather/bsas', undefined, { id: 1 })
+      expect(called.body).toEqual({ id: 1 })
+    })
+    it('sets urlParams correctly', () => {
+      const urlParams = { defree: 'celcius' }
+      const called = call('POST', 'weather/bsas', urlParams)
+      expect(called.urlParams).toEqual(urlParams)
+    })
   })
 
   describe('get()', () => {

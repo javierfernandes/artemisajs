@@ -14,9 +14,9 @@
 export const call = (method, path, urlParams, body, token) => ({
   method,
   path,
-  ...urlParams,
-  ...body,
-  ...token
+  ...urlParams && { urlParams },
+  ...body && { body },
+  ...token && { token }
 })
 
 export const get = (path) => ({ method: 'GET', path })
