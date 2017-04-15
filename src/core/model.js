@@ -1,4 +1,4 @@
-import { hasValueInKey } from 'util/object'
+import { hasValueInKey } from '../util/object'
 
 export const State = {
   FETCHING: 'fetching',

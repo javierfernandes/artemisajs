@@ -32,7 +32,7 @@ function dispatchFetch(props, state, dispatch, { storeFieldName, call, on }) {
  * If we have a piece state managed by this framework, and the value has a transformerId,
  * this function tells if it is necessary to do a new fetch.
  */
-function shouldFetch(fetchState, key, keyProvider) {
+export function shouldFetch(fetchState, key, keyProvider) {
 
   // No key => no fetch
   if (!key) return false

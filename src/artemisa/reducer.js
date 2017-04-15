@@ -1,6 +1,6 @@
 import { storagePropertyNameForAction, isArtemisaAction } from './dispatch'
 import { isRequest, isReceive, isError } from '../core/actions'
-import { State, isFetchingSlot, isFetchedSlot, isErrorSlot } from '../core/model'
+import { State, isFetchingSlot, isFetchedSlot } from '../core/model'
 
 //
 // TODO: 
