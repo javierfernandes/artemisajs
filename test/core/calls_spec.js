@@ -24,6 +24,11 @@ describe('Core calls factory', () => {
       const called = call('POST', 'weather/bsas', urlParams)
       expect(called.urlParams).toEqual(urlParams)
     })
+    it('sets token correctly', () => {
+      const token = '$UP3RS3CR37'
+      const called = call('POST', 'weather/bsas', undefined, undefined, token)
+      expect(called.token).toEqual(token)
+    })
   })
 
   describe('get()', () => {
