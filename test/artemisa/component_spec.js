@@ -6,9 +6,8 @@ import thunk from 'redux-thunk'
 import nock from 'nock'
 import expect from 'expect'
 import { mount } from 'enzyme'
-
 import { fetchingData } from 'artemisa/component'
-import { isArtemisaReceive } from 'artemisa/dispatch'
+import { isArtemisaReceive, isArtemisaType } from 'artemisa/dispatch'
 import { artemisa } from 'artemisa/reducer'
 import { dataService } from 'core/service'
 import { get, auth } from 'core/call'
@@ -34,7 +33,7 @@ class MyComponent extends React.Component {
 
 const MyComponentWithFetches = fetchingData({
   weather: {
-    name: 'theWeather', 
+    name: 'theWeather',
     call: () => auth(get('getWeather'))
   }
 })(MyComponent)
@@ -141,7 +140,7 @@ describe('Artemisa fetchingData() HOC', () => {
       it('TRANSFORMING the value to inject the property', () => {
         const MyComponentWithTransform = fetchingData({
           weather: {
-            name: 'theWeather', 
+            name: 'theWeather',
             call: () => auth(get('getWeather')),
             transforming: v => ({ temp: v.temp.toUpperCase() })
           }
@@ -281,13 +280,12 @@ describe('Artemisa fetchingData() HOC', () => {
 
 describe('Implementation utilites', () => {
   it('isArtemisaReceive()', () => {
-    const action = { 
+    const action = {
       type: 'ARTEMISA_theWeather_RECEIVE',
       originType: 'ARTEMISA_theWeather',
       apiCallType: 'RECEIVE',
-      path: 'getWeather' 
+      path: 'getWeather'
     }
     expect(isArtemisaReceive(action)).toEqual(true)
   })
-
 })

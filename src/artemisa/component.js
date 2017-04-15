@@ -1,11 +1,15 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { State, isInStateSlot } from '../core/model'
-import { isFunction, trueFn, identity, properties } from '../util/object'
+import { State } from '../core/model'
+import { isFunction, trueFn, identity } from '../util/function'
+import { properties, hasValueInKey } from '../util/object'
 import { dispatchFetches } from './dispatch'
 
 /**
  * Base class of the higher order component.
+ * Manages the component lifecycle to try to fetch on mount/update.
+ * Dispatches the actions for real fetching and maps properties to decorated
+ * component
  */
 class AbstractWithFetches extends React.Component {
 
@@ -37,14 +41,14 @@ class AbstractWithFetches extends React.Component {
 
   mapFetchToProp({ storeFieldName, transforming }, state) {
     const stateValue = state.artemisa[storeFieldName]
-    return isInStateSlot(stateValue, State.FETCHED) ? { ...stateValue, value: transforming(stateValue.value) } : stateValue
+    return hasValueInKey(stateValue, 'state', State.FETCHED) ? { ...stateValue, value: transforming(stateValue.value) } : stateValue
   }
 
 }
 
 /**
  * A Fetch internal Descriptor has the following form
- * { 
+ * {
  *    propName (always present): property name to use to inject the slot,
  *    storeFieldName (always present): the property to store the cache in the store.
  *    call (always present): function(props, state) that returns the call object

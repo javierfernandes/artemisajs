@@ -2,13 +2,11 @@ import { isReceive } from '../core/actions'
 import { isFetchingSlot, isErrorSlot } from '../core/model'
 
 export const ARTEMISA = 'ARTEMISA'
-export const isArtemisaType = type => type.indexOf(ARTEMISA) === 0
+export const isArtemisaType = type => type && !!type.match(/^ARTEMISA/)
 export const isArtemisaReceive = action => isReceive(action) && isArtemisaType(action.originType)
 export const isArtemisaAction = action => isArtemisaType(action.type)
 
-export function storagePropertyNameForAction(action) {
-  return action.originType.slice(ARTEMISA.length + 1)
-} 
+export const storagePropertyNameForAction = action => action.originType.slice(ARTEMISA.length + 1)
 
 export function dispatchFetches(props, state, dispatch, fetches) {
   fetches.forEach(fetch => {

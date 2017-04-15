@@ -6,6 +6,7 @@
   "author": "Javier Fernandes",
   "scripts": {
     "test": "export NODE_PATH=./src && mocha --require jsdom-global/register --compilers js:babel-register --recursive 'test/**/*.@(js|jsx)'",
+    "test:watch": "npm run test -- --watch",
     "lint": "eslint src/ test/",
     "coverage-test": "export NODE_PATH=./src && NODE_ENV=test nyc --require babel-core/register mocha --require jsdom-global/register --compilers js:babel-register --recursive 'test/**/*.@(js|jsx)'",
     "coverage-report": "nyc report --reporter=lcov",
