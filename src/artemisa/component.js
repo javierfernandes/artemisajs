@@ -1,13 +1,14 @@
 import React from 'react'
 import { connect } from 'react-redux'
 
-import { State, isInStateSlot } from '../core/model'
+import { State } from '../core/model'
 import { isReceive } from '../core/actions'
+import { hasValueInKey } from '../util/object'
 import { shouldFetch } from '../core/reducer'
-import { isFunction, trueFn, identity } from '../util/object'
+import { isFunction, trueFn, identity } from '../util/function'
 export const ARTEMISA = 'ARTEMISA'
 
-export const isArtemisaType = type => type.indexOf(ARTEMISA) === 0
+export const isArtemisaType = type => type && !!type.match(/^ARTEMISA/)
 export const isArtemisaReceive = action => isReceive(action) && isArtemisaType(action.originType)
 export const isArtemisaAction = action => isArtemisaType(action.type)
 
@@ -64,14 +65,14 @@ class AbstractWithFetches extends React.Component {
 
   mapFetchToProp({ storeFieldName, transforming }, state) {
     const stateValue = state.artemisa[storeFieldName]
-    return isInStateSlot(stateValue, State.FETCHED) ? { ...stateValue, value: transforming(stateValue.value) } : stateValue
+    return hasValueInKey(stateValue, 'state', State.FETCHED) ? { ...stateValue, value: transforming(stateValue.value) } : stateValue
   }
 
 }
 
 /**
  * A Fetch internal Descriptor has the following form
- * { 
+ * {
  *    propName (always present): property name to use to inject the slot,
  *    storeFieldName (always present): the property to store the cache in the store.
  *    call (always present): function(props, state) that returns the call object
