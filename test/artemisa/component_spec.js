@@ -7,7 +7,7 @@ import nock from 'nock'
 import expect from 'expect'
 import { mount } from 'enzyme'
 
-import { fetchingData, isArtemisaReceive } from 'artemisa/component'
+import { fetchingData, isArtemisaReceive, isArtemisaType } from 'artemisa/component'
 import { artemisa } from 'artemisa/reducer'
 import { dataService } from 'core/service'
 import { get, auth } from 'core/call'
@@ -33,7 +33,7 @@ class MyComponent extends React.Component {
 
 const MyComponentWithFetches = fetchingData({
   weather: {
-    name: 'theWeather', 
+    name: 'theWeather',
     call: () => auth(get('getWeather'))
   }
 })(MyComponent)
@@ -140,7 +140,7 @@ describe('Artemisa fetchingData() HOC', () => {
       it('TRANSFORMING the value to inject the property', () => {
         const MyComponentWithTransform = fetchingData({
           weather: {
-            name: 'theWeather', 
+            name: 'theWeather',
             call: () => auth(get('getWeather')),
             transforming: v => ({ temp: v.temp.toUpperCase() })
           }
@@ -280,13 +280,25 @@ describe('Artemisa fetchingData() HOC', () => {
 
 describe('Implementation utilites', () => {
   it('isArtemisaReceive()', () => {
-    const action = { 
+    const action = {
       type: 'ARTEMISA_theWeather_RECEIVE',
       originType: 'ARTEMISA_theWeather',
       apiCallType: 'RECEIVE',
-      path: 'getWeather' 
+      path: 'getWeather'
     }
     expect(isArtemisaReceive(action)).toEqual(true)
   })
+})
 
+describe('isArtemisaType', () => {
+  it('matches a string that begins with ARTEMISA', () => {
+    expect(isArtemisaType('ARTEMISA_ACTION')).toBe(true)
+  })
+  it('returns false if action does not begin with ARTEMISA', () => {
+    expect(isArtemisaType('ACTION_ARTEMISA')).toBe(false)
+  })
+  it('does not break if no parameters are passed', () => {
+    isArtemisaType()
+    expect(isArtemisaType).toNotThrow()
+  })
 })

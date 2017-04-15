@@ -8,7 +8,7 @@ import { shouldFetch } from '../core/reducer'
 import { isFunction, trueFn, identity } from '../util/function'
 export const ARTEMISA = 'ARTEMISA'
 
-export const isArtemisaType = type => !!type.match('ARTEMISA')
+export const isArtemisaType = type => type && !!type.match(/^ARTEMISA/)
 export const isArtemisaReceive = action => isReceive(action) && isArtemisaType(action.originType)
 export const isArtemisaAction = action => isArtemisaType(action.type)
 
