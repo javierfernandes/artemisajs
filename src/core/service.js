@@ -5,7 +5,7 @@ import {
     callFromAction,
     isApiCall
 } from './actions'
-import { apiFetch, compileUrl, fetchOptions } from '../fetch/fetch-actions'
+import { apiFetch, compileUrl, fetchOptions } from './fetch'
 
 /* eslint no-unused-vars: 0 */
 export const dataService = store => next => action => {

@@ -1,3 +1,6 @@
+
+export const properties = obj => Object.keys(obj).map(name => ({ name, value: obj[name] }))
+
 export const isEmpty = (obj = {}) => !Object.getOwnPropertyNames(obj).length;
 export const values = (obj = {}) => Object.keys(obj).reduce((y, z) => y.push(obj[z]) && y, []);
 

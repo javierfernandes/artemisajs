@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import { State, isInStateSlot } from '../core/model'
 import { isReceive } from '../core/actions'
 import { shouldFetch } from '../core/reducer'
-import { isFunction, trueFn, identity } from '../util/object'
+import { isFunction, trueFn, identity, properties } from '../util/object'
 export const ARTEMISA = 'ARTEMISA'
 
 export const isArtemisaType = type => type.indexOf(ARTEMISA) === 0
@@ -78,16 +78,15 @@ class AbstractWithFetches extends React.Component {
  *    transforming: optional transformation
  * }
  */
-const createFetchDescriptors = fetches => Object.keys(fetches).map(propName => {
-  const value = fetches[propName]
-  return {
-    propName,
-    storeFieldName: value.name || propName,     // defaults to propName
+const createFetchDescriptors = fetches => properties(fetches).map(({ name, value }) => (
+  {
+    propName: name,
+    storeFieldName: value.name || name,     // defaults to propName
     call: isFunction(value) ? value : value.call,
-    transforming: value.transforming ? value.transforming : identity,
-    on: value.on ? value.on : trueFn
+    transforming: value.transforming || identity,
+    on: value.on || trueFn
   }
-})
+))
 
 export const fetchingData = fetches => WrappedComponent => {
   const fetchDescriptors = createFetchDescriptors(fetches)
