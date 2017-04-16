@@ -1,23 +1,15 @@
 import React from 'react'
 import { connect } from 'react-redux'
-
 import { State } from '../core/model'
-import { isReceive } from '../core/actions'
-import { hasValueInKey } from '../util/object'
-import { shouldFetch } from '../core/reducer'
 import { isFunction, trueFn, identity } from '../util/function'
-export const ARTEMISA = 'ARTEMISA'
-
-export const isArtemisaType = type => type && !!type.match(/^ARTEMISA/)
-export const isArtemisaReceive = action => isReceive(action) && isArtemisaType(action.originType)
-export const isArtemisaAction = action => isArtemisaType(action.type)
-
-export function storagePropertyNameForAction(action) {
-  return action.originType.slice(ARTEMISA.length + 1)
-}
+import { properties, hasValueInKey } from '../util/object'
+import { dispatchFetches } from './dispatch'
 
 /**
  * Base class of the higher order component.
+ * Manages the component lifecycle to try to fetch on mount/update.
+ * Dispatches the actions for real fetching and maps properties to decorated
+ * component
  */
 class AbstractWithFetches extends React.Component {
 
@@ -26,23 +18,7 @@ class AbstractWithFetches extends React.Component {
 
   tryToFetch() {
     const { state, dispatch } = this.props;
-    this.getFetches().forEach(fetch => {
-      this.dispatchFetch(fetch, state, dispatch)
-    })
-  }
-
-  dispatchFetch({ storeFieldName, call, on }, state, dispatch) {
-    if (!on(this.props, state)) {
-      return;
-    }
-    const action = ({
-      type: `${ARTEMISA}_${storeFieldName}`,
-      dataApiCall: call(this.props, state)
-    })
-    const should = shouldFetch(state.artemisa[storeFieldName], action.dataApiCall.path, s => s.path)
-    if (should) {
-      dispatch(action)
-    }
+    dispatchFetches(this.props, state, dispatch, this.getFetches())
   }
 
   render() {
@@ -79,17 +55,22 @@ class AbstractWithFetches extends React.Component {
  *    transforming: optional transformation
  * }
  */
-const createFetchDescriptors = fetches => Object.keys(fetches).map(propName => {
-  const value = fetches[propName]
-  return {
-    propName,
-    storeFieldName: value.name || propName,     // defaults to propName
+const createFetchDescriptors = fetches => properties(fetches).map(({ name, value }) => (
+  {
+    propName: name,
+    storeFieldName: value.name || name,     // defaults to propName
     call: isFunction(value) ? value : value.call,
-    transforming: value.transforming ? value.transforming : identity,
-    on: value.on ? value.on : trueFn
+    transforming: value.transforming || identity,
+    on: value.on || trueFn
   }
-})
+))
 
+/**
+ * Decorator function to create a React Higher-order Component wrapping
+ * your component so that Artemisa can take care of server fetches.
+ * 
+ * @param {*} fetches an object that describes one or many "fetches" as properties.
+ */
 export const fetchingData = fetches => WrappedComponent => {
   const fetchDescriptors = createFetchDescriptors(fetches)
   class WithFetches extends AbstractWithFetches {

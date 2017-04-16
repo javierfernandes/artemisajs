@@ -1,4 +1,4 @@
-export const hasValueInKey = (obj, key, value) => {
-  if (!obj) return false
-  return obj[key] === value
-}
+
+export const properties = obj => Object.keys(obj).map(name => ({ name, value: obj[name] }))
+
+export const hasValueInKey = (obj, key, value) => !!obj && obj[key] === value

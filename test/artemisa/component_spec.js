@@ -6,8 +6,8 @@ import thunk from 'redux-thunk'
 import nock from 'nock'
 import expect from 'expect'
 import { mount } from 'enzyme'
-
-import { fetchingData, isArtemisaReceive, isArtemisaType } from 'artemisa/component'
+import { fetchingData } from 'artemisa/component'
+import { isArtemisaReceive, isArtemisaType } from 'artemisa/dispatch'
 import { artemisa } from 'artemisa/reducer'
 import { dataService } from 'core/service'
 import { get, auth } from 'core/call'
@@ -287,18 +287,5 @@ describe('Implementation utilites', () => {
       path: 'getWeather'
     }
     expect(isArtemisaReceive(action)).toEqual(true)
-  })
-})
-
-describe('isArtemisaType', () => {
-  it('matches a string that begins with ARTEMISA', () => {
-    expect(isArtemisaType('ARTEMISA_ACTION')).toBe(true)
-  })
-  it('returns false if action does not begin with ARTEMISA', () => {
-    expect(isArtemisaType('ACTION_ARTEMISA')).toBe(false)
-  })
-  it('does not break if no parameters are passed', () => {
-    isArtemisaType()
-    expect(isArtemisaType).toNotThrow()
   })
 })
