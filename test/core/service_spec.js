@@ -112,6 +112,35 @@ describe('Core Service', () => {
 
   })
 
+  describe('Transformations', () => {
+    it('match and execute a registered transformations for action name', () => {
+      nock('http://artemisajs.org/')
+      .get('/temperature')
+      .reply(200, { temperature: 21 })
+
+      const theCall = get('temperature')
+
+      dataService.registerTransformation('GET_TEMPERATURE', tempC => {
+        return {
+          temperature: tempC.temperature * 9 / 5 + 32
+        }
+      })
+
+      const expectedTempH = 69.8
+
+      const store = mockStore({});
+      return store.dispatch({ type: 'GET_TEMPERATURE', dataApiCall: theCall })
+        .then(() => {
+          expect(store.getActions()).toEqual([
+            { type: 'GET_TEMPERATURE', dataApiCall: { method: 'GET', path: 'temperature' } },
+            { type: 'GET_TEMPERATURE_REQUEST', originType: 'GET_TEMPERATURE', apiCallType: ApiCallType.REQUEST, path: 'temperature' },
+            { type: 'GET_TEMPERATURE_RECEIVE', originType: 'GET_TEMPERATURE', apiCallType: ApiCallType.RECEIVE, data: { temperature: expectedTempH }, path: 'temperature' }
+          ])
+        }
+      )
+    })
+  })
+
 })
 
 function dispatchAndAssert(action, asserter) {
