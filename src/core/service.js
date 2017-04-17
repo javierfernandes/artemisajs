@@ -24,6 +24,22 @@ function callEndpoint(store, action, next) {
   )
 }
 
+// data Service as an object to configure transformations
+dataService.transformations = []
+dataService.registerTransformation = (actionType, fn) => {
+  dataService.transformations[actionType] = fn
+}
+
+const transformReceiveAction = receive => ({ 
+  ...receive,
+  data: transform(receive.originType, receive.data)
+})
+
+const transform = (actionType, value) => {
+  const t = dataService.transformations[actionType]
+  return t ? t(value) : value
+}
+
 /* eslint-disable no-console */
 function doCallEndpoint(callSpec, next, onReceive, onError) {
   const { method, path, urlParams, body, token } = callSpec
@@ -34,7 +50,7 @@ function doCallEndpoint(callSpec, next, onReceive, onError) {
       //   next(unauthorized());
       // }
       (response.ok
-        ? response.json().then(json => next(onReceive(json)))
+        ? response.json().then(json => next(transformReceiveAction(onReceive((json)))))
         : response.json().then(json => next(onError(json.error.message))))
     )
     .catch(error => {

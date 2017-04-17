@@ -5,5 +5,5 @@ export { dataService as service } from './lib/core/service'
 export { State, isErrorSlot, isFetchedSlot, isFetchingSlot } from './lib/core/model'
 
 // internals that needs to be removed
-export { shouldFetch } from './lib/artemisa/dispatch'
+export { shouldFetch, actionName } from './lib/artemisa/dispatch'
 export { simulateDataReceive, isDerivedActionFor, receiveTypeFor } from './lib/core/actions'

@@ -6,6 +6,8 @@ export const isArtemisaType = type => type && !!type.match(/^ARTEMISA/)
 export const isArtemisaReceive = action => isReceive(action) && isArtemisaType(action.originType)
 export const isArtemisaAction = action => isArtemisaType(action.type)
 
+export const actionName = storeFieldName => `${ARTEMISA}_${storeFieldName}`
+
 export const storagePropertyNameForAction = action => action.originType.slice(ARTEMISA.length + 1)
 
 export function dispatchFetches(props, state, dispatch, fetches) {
@@ -19,7 +21,7 @@ function dispatchFetch(props, state, dispatch, { storeFieldName, call, on }) {
     return;
   }
   const action = ({
-    type: `${ARTEMISA}_${storeFieldName}`,
+    type: actionName(storeFieldName),
     dataApiCall: call(props, state)
   })
   const should = shouldFetch(state.artemisa[storeFieldName], action.dataApiCall.path, s => s.path)
