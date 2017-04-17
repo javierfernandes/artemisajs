@@ -4,6 +4,10 @@
   "description": "React/Redux data fetching API",
   "license": "MIT",
   "author": "Javier Fernandes",
+  "repository": {
+    "type": "git",
+    "url": "javierfernandes/artemisajs"
+  },
   "scripts": {
     "build": "babel index.babel.js --out-file index.js && babel src --out-dir lib",
     "prepublish": "npm run build",
