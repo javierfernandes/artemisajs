@@ -1,10 +1,16 @@
 {
-  "name": "artemisajs",
-  "version": "1.0.0",
+  "name": "artemisa",
+  "version": "1.0.2-alpha-01",
   "description": "React/Redux data fetching API",
   "license": "MIT",
   "author": "Javier Fernandes",
+  "repository": {
+    "type": "git",
+    "url": "javierfernandes/artemisajs"
+  },
   "scripts": {
+    "build": "babel index.babel.js --out-file index.js && babel src --out-dir lib",
+    "prepublish": "npm run build",
     "test": "export NODE_PATH=./src && mocha --require jsdom-global/register --compilers js:babel-register --recursive 'test/**/*.@(js|jsx)'",
     "test:watch": "npm run test -- --watch",
     "lint": "eslint src/ test/",
