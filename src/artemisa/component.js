@@ -25,15 +25,16 @@ class AbstractWithFetches extends React.Component {
     const fetched = this.mapStateToProps()
     const Wrapped = this.getWrappedComponent()
     /* eslint no-unused-vars: 0 */
-    const { state, ...props } = this.props
-    return <Wrapped {...props} {...fetched} />
+    const { state, dispatch, ...restOfProps } = this.props
+    return <Wrapped {...restOfProps} {...fetched} />
   }
 
   mapStateToProps() {
-    const { state } = this.props
+    /* eslint no-unused-vars: 0 */
+    const { state, dispatch, ...restOfProps } = this.props
     return this.getFetches().reduce((props, fetch) => {
-      if (fetch.on(props, state)) {
-        props[fetch.propName] = this.mapFetchToProp(fetch, state)
+      if (!!fetch.on(restOfProps, this.props.state)) {
+        props[fetch.propName] = this.mapFetchToProp(fetch, this.props.state)
       }
       return props
     }, {})

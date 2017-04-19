@@ -189,18 +189,24 @@ describe('Artemisa fetchingData() HOC', () => {
           expect(wrapper.text()).toEqual('Fetching')
         })
 
-        it.skip('Conditional on() only executes the call if the condition is met (based on PROPS)', () => {
+        it('Conditional on() only executes the call if the condition is met (based on PROPS)', () => {
           const MyComponentWithCondition = fetchingData({
             weather: {
               call: (props) => auth(get(`getWeather?city=${props.city}`)),
-              on: (props) => props.city
+              on: (ownProps) => ownProps.city
             }
           })(MyComponent)
 
+          const ComponentWithStore = (props) => {
+            return (
+              <Provider store={store}>
+                <MyComponentWithCondition {...props} />
+              </Provider>
+            )
+          }
+
           const wrapper = mount(
-            <Provider store={store}>
-              <MyComponentWithCondition />
-            </Provider>
+            <ComponentWithStore />
           )
 
           // NOT FETCH YET !
