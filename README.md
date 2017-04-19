@@ -172,8 +172,6 @@ const MyComponentWithFetches = fetchingData({
 ```
 So it will only call the fetch if there is a city in the state.
 
-> THIS CURRENTLY DOES NOT SUPPORT USING PROPS (UPDATING WHEN PROPS CHANGE) !!!
-
 # Slot
 
 The slot has the following properties
