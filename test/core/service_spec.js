@@ -139,6 +139,43 @@ describe('Core Service', () => {
         }
       )
     })
+
+    it('uses the store in a registered transformations', () => {
+      const celciusT = 21
+
+      nock('http://artemisajs.org/')
+        .get('/temperature')
+        .times(2)
+        .reply(200, { temperature: celciusT })
+
+      const theCall = get('temperature')
+
+      dataService.registerTransformation('GET_TEMPERATURE', (tempC, store) => {
+        return {
+          temperature: store.getState().farenheit ? (tempC.temperature * 9 / 5 + 32) : tempC.temperature
+        }
+      })
+
+      const expectedTempH = 69.8
+
+      const storeExpectations = (store, temperature) =>
+        expect(store.getActions()).toEqual([
+          { type: 'GET_TEMPERATURE', dataApiCall: { method: 'GET', path: 'temperature' } },
+          { type: 'GET_TEMPERATURE_REQUEST', originType: 'GET_TEMPERATURE', apiCallType: ApiCallType.REQUEST, path: 'temperature' },
+          { type: 'GET_TEMPERATURE_RECEIVE', originType: 'GET_TEMPERATURE', apiCallType: ApiCallType.RECEIVE, data: { temperature: temperature }, path: 'temperature' }
+        ])
+
+
+      const store = mockStore({ farenheit: true });
+      return store.dispatch({ type: 'GET_TEMPERATURE', dataApiCall: theCall })
+        .then(() => storeExpectations(store, expectedTempH))
+        .then(() => {
+          const store = mockStore({ farenheit: false });
+          return store.dispatch({ type: 'GET_TEMPERATURE', dataApiCall: theCall })
+            .then(() => storeExpectations(store, celciusT))
+        })
+    })
+
   })
 
 })
