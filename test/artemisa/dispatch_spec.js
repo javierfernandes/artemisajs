@@ -1,5 +1,5 @@
 import expect from 'expect'
-import { isArtemisaType } from 'artemisa/dispatch'
+import { isArtemisaType, shouldFetch } from 'artemisa/dispatch'
 
 describe('isArtemisaType', () => {
   it('matches a string that begins with ARTEMISA', () => {
@@ -18,4 +18,16 @@ describe('isArtemisaType', () => {
     isArtemisaType()
     expect(isArtemisaType).toNotThrow()
   })
+})
+
+describe('shouldFetch()', () => {
+
+  it('says NO if it had an error with the same path', () => {
+    expect(shouldFetch({ state: 'error', path: '/blah' }, '/blah', a => a.path)).toBe(false)
+  })
+
+  it('says YES if it had an error but with different path', () => {
+    expect(shouldFetch({ state: 'error', path: '/blah' }, '/bleh', a => a.path)).toBe(true)
+  })
+
 })

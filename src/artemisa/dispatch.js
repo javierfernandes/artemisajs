@@ -46,7 +46,7 @@ export function shouldFetch(fetchState, key, keyProvider) {
   if (isFetchingSlot(fetchState) && (!keyProvider || keyProvider(fetchState) === key)) return false
 
   // Handle errors
-  if (isErrorSlot(fetchState)) {
+  if (isErrorSlot(fetchState) && (!keyProvider || keyProvider(fetchState) === key)) {
     /* eslint-disable no-console */
     console.log(`Ignoring request to fetch '${key}' because of previous error: '${fetchState.error}'`)
     return false
