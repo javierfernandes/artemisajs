@@ -7,7 +7,6 @@ import {
 } from './actions'
 import { apiFetch, compileUrl, fetchOptions } from './fetch'
 
-/* eslint no-unused-vars: 0 */
 export const dataService = store => next => action => {
   next(action)
   return isApiCall(action) ? callEndpoint(store, action, next) : Promise.resolve()

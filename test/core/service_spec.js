@@ -21,7 +21,7 @@ describe('Core Service', () => {
     nock.cleanAll();
   })
 
-  it('Should dispatch the original action', () => (
+  it('should dispatch the original action', () => (
     dispatchAndAssert(
       { type: 'GET_WEATHER' },
       (actions) =>
@@ -29,7 +29,7 @@ describe('Core Service', () => {
     )
   ))
 
-  it('Should dispatch an extra action to notify the REQUEST with convention on type', () => {
+  it('should dispatch an extra action to notify the REQUEST with convention on type', () => {
     nock('http://artemisajs.org/')
       .get('/weather')
       .reply(200, [{ weather: 'someResponse' }])
@@ -43,7 +43,7 @@ describe('Core Service', () => {
     )
   })
 
-  it('Should NOT dispatch a REQUEST action if is not an API CALL action', () => {
+  it('should NOT dispatch a REQUEST action if is not an API CALL action', () => {
     return dispatchAndAssert(
       { type: 'GET_WEATHER' },
       actions =>
@@ -53,7 +53,7 @@ describe('Core Service', () => {
     )
   })
 
-  it('Should dispatch a RECEIVE action if request was OK', () => {
+  it('should dispatch a RECEIVE action if request was OK', () => {
     nock('http://artemisajs.org/')
         .get('/weather')
         .reply(200, { weather: 'someResponse' })
@@ -70,7 +70,7 @@ describe('Core Service', () => {
     )
   })
 
-  it('Should dispatch an ERROR action if endpoint fails (not configured in nock)', () => {
+  it('should dispatch an ERROR action if endpoint fails (not configured in nock)', () => {
     return dispatchAndAssert(
       { type: 'GET_WEATHER', dataApiCall: { method: 'GET', path: 'blah' } },
       actions =>
@@ -84,7 +84,7 @@ describe('Core Service', () => {
 
   describe('Security', () => {
 
-    it('Should get the token from the store state)', () => {
+    it('should get the token from the store state)', () => {
       nock('http://artemisajs.org/', {
         reqheaders: {
           Authorization: 'Bearer abc'

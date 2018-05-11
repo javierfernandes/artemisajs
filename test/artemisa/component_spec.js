@@ -7,7 +7,7 @@ import nock from 'nock'
 import expect from 'expect'
 import { mount } from 'enzyme'
 import { fetchingData } from 'artemisa/component'
-import { isArtemisaReceive, isArtemisaType } from 'artemisa/dispatch'
+import { isArtemisaReceive } from 'artemisa/dispatch'
 import { artemisa } from 'artemisa/reducer'
 import { dataService } from 'core/service'
 import { get, auth } from 'core/call'
@@ -17,17 +17,18 @@ const mockStore = configureMockStore(middlewares)
 
 class MyComponent extends React.Component {
   render() {
-    if (!this.props.weather) {
+    const { weather } = this.props
+    if (!weather) {
       return <div>Initializing</div>
     }
-    if (this.props.weather.state === 'fetching') {
+    if (weather.state === 'fetching') {
       return <div>Fetching</div>
     }
-    if (this.props.weather.state === 'fetched') {
-      return <div>Temperature is {this.props.weather.value.temp}</div>
+    if (weather.state === 'fetched') {
+      return <div>Temperature is {weather.value.temp}</div>
     }
     // TODO: error
-    return <div>{this.props.weather}</div>
+    return <div>{JSON.stringify(weather)}</div>
   }
 }
 
