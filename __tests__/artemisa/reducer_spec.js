@@ -55,4 +55,22 @@ describe('Artemisa reducer', () => {
     })
   })
 
+  it('should update state on ERROR fetching', () => {
+    const action = {
+      type: 'ARTEMISA_theWeather_ERROR',
+      apiCallType: 'ERROR',
+      originType: 'ARTEMISA_theWeather',
+      path: 'getWeather',
+      error: 'connection problem'
+    }
+    const state = artemisa(undefined, action);
+    expect(state).toEqual({
+      theWeather: {
+        state: 'error',
+        path: 'getWeather',
+        error: 'connection problem'
+      }
+    })
+  })
+
 })

@@ -14,22 +14,17 @@ export function apiFetch(url, options) {
 export const compileUrl = (path, params = {}) => (typeof(path) === 'string' ? path : path(params))
 
 export function fetchOptions(method = 'GET', params = {}, authToken) {
-  let headers = {}
+  let headers = authToken ? { Authorization: `Bearer ${authToken}` } : {}
   let body = undefined
-  if (authToken) {
-    headers = {
-      ...headers,
-      Authorization: `Bearer ${authToken}`
-    }
-  }
+
   if (method === 'POST' || method === 'PUT') {
     if (params.file) {
-      body = new FormData();
+      body = new FormData()
       Object.keys(params).forEach((key) => {
         if (key !== 'file') {
-          body.append(key, params[key]);
+          body.append(key, params[key])
         } else {
-          body.append(params[key].name, params[key].file);
+          body.append(params[key].name, params[key].file)
         }
       })
     } else {

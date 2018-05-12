@@ -1,5 +1,3 @@
-import { hasValueInKey } from '../util/object'
-
 export const State = {
   FETCHING: 'fetching',
   FETCHED: 'fetched',
@@ -7,6 +5,7 @@ export const State = {
 }
 
 // checking value
-export const isFetchingSlot = slot => hasValueInKey(slot, 'state', State.FETCHING)
-export const isFetchedSlot = slot => hasValueInKey(slot, 'state', State.FETCHED)
-export const isErrorSlot = slot => hasValueInKey(slot, 'state', State.ERROR)
+const stateIs = value => obj => !!obj && obj.state === value
+export const isFetchingSlot = stateIs(State.FETCHING)
+export const isFetchedSlot = stateIs(State.FETCHED)
+export const isErrorSlot = stateIs(State.ERROR)

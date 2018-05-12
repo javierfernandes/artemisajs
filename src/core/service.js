@@ -8,8 +8,8 @@ import {
 import { apiFetch, compileUrl, fetchOptions } from './fetch'
 
 export const dataService = store => next => action => {
-  next(action)
-  return isApiCall(action) ? callEndpoint(store, action, next) : Promise.resolve()
+  const r = next(action)
+  return isApiCall(action) ? callEndpoint(store, action, next) : Promise.resolve(r)
 }
 
 const callEndpoint = (store, action, next) => {
