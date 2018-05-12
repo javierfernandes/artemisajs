@@ -54,7 +54,7 @@ function doCallEndpoint(callSpec, next, onReceive, onError, store) {
         : response.json().then(json => next(onError(json.error.message))))
     )
     .catch(error => {
-      console.error('ERROR on API Call', error)
+      // console.error('ERROR on API Call', error)
       next(onError(error.message))
     })
 }

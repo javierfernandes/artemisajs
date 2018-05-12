@@ -1,4 +1,3 @@
-import expect from 'expect';
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import nock from 'nock';
@@ -31,8 +30,8 @@ describe('Core Service - Integration Tests', () => {
       (actions) =>
         expect(actions.find(
            a => a.type === 'GET_WEATHER_REQUEST' && a.apiCallType === ApiCallType.REQUEST)
-        ).toExist()
-    )
+        ).toBeTruthy()
+    );
   })
 
 })

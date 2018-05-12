@@ -1,4 +1,3 @@
-import expect from 'expect';
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import nock from 'nock';
@@ -25,7 +24,7 @@ describe('Core Service', () => {
     dispatchAndAssert(
       { type: 'GET_WEATHER' },
       (actions) =>
-          expect(actions.find(a => a.type === 'GET_WEATHER')).toExist(true)
+          expect(actions.find(a => a.type === 'GET_WEATHER')).toBeTruthy()
     )
   ))
 
@@ -39,8 +38,8 @@ describe('Core Service', () => {
       (actions) =>
         expect(actions.find(
            a => a.type === 'GET_WEATHER_REQUEST' && a.apiCallType === ApiCallType.REQUEST)
-        ).toExist()
-    )
+        ).toBeTruthy()
+    );
   })
 
   it('should NOT dispatch a REQUEST action if is not an API CALL action', () => {

@@ -1,5 +1,4 @@
 import { hasValueInKey } from 'util/object'
-import expect from 'expect'
 
 describe('hasValueInKey', () => {
   const god = {
