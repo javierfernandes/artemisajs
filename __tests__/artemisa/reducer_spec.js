@@ -3,8 +3,8 @@ import { artemisa } from 'artemisa/reducer';
 describe('Artemisa reducer', () => {
 
   it('should return the initial state if state is undefined', () => {
-    const state = artemisa(undefined, {});
-    expect(state).toEqual({});
+    const state = artemisa(undefined, {})
+    expect(state).toEqual({})
   })
 
   it('should do nothing on initial action', () => {
@@ -17,7 +17,7 @@ describe('Artemisa reducer', () => {
         token: undefined
       }
     }
-    const state = artemisa(undefined, action);
+    const state = artemisa(undefined, action)
     expect(state).toEqual({});
   })
 

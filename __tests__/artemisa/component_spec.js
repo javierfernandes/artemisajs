@@ -3,11 +3,11 @@ import configureMockStore from 'redux-mock-store'
 import { createStore, combineReducers, applyMiddleware, compose } from 'redux'
 import { Provider } from 'react-redux'
 import thunk from 'redux-thunk'
-import nock from 'nock'
 import { mount } from 'enzyme'
 import { fetchingData } from 'artemisa/component'
 import { isArtemisaReceive } from 'artemisa/dispatch'
 import { artemisa } from 'artemisa/reducer'
+import { State } from 'core/model'
 import { dataService } from 'core/service'
 import { get, auth } from 'core/call'
 
@@ -20,10 +20,10 @@ class MyComponent extends React.Component {
     if (!weather) {
       return <div>Initializing</div>
     }
-    if (weather.state === 'fetching') {
+    if (weather.state === State.FETCHING) {
       return <div>Fetching</div>
     }
-    if (weather.state === 'fetched') {
+    if (weather.state === State.FETCHED) {
       return <div>Temperature is {weather.value.temp}</div>
     }
     // TODO: error
@@ -41,10 +41,6 @@ const MyComponentWithFetches = fetchingData({
 // TEST
 
 describe('Artemisa fetchingData() HOC', () => {
-
-  afterEach(() => {
-    nock.cleanAll()
-  })
 
   describe('basic mount - action dispatching', () => {
     let store = undefined

@@ -14,31 +14,33 @@ describe('Core Service - Integration Tests', () => {
     nock('http://artemisajs.org/')
       .get('/ok')
       .reply(200, { blah: 'ok' })
-  });
-
-  afterEach(() => {
-    nock.cleanAll();
   })
 
-  it('Should dispatch an extra action to notify the REQUEST with convention on type', () => {
+  afterEach(() => {
+    nock.cleanAll()
+  })
+
+  it('should dispatch an extra action to notify the REQUEST with convention on type', () => {
     nock('http://artemisajs.org/')
       .post('/todoItem')
       .reply(200, [{ status: 'ok' }])
 
     return dispatchAndAssert(
       { type: 'GET_WEATHER', dataApiCall: call('POST', 'todoItem') },
-      (actions) =>
-        expect(actions.find(
-           a => a.type === 'GET_WEATHER_REQUEST' && a.apiCallType === ApiCallType.REQUEST)
-        ).toBeTruthy()
-    );
+      actions =>
+        expect(actions).toMatchObject([
+          { type: 'GET_WEATHER' },
+          { type: 'GET_WEATHER_REQUEST', apiCallType: ApiCallType.REQUEST },
+          { type: 'GET_WEATHER_RECEIVE', apiCallType: ApiCallType.RECEIVE }
+        ])
+    )
   })
 
 })
 
-function dispatchAndAssert(action, asserter) {
-  const store = mockStore({});
-  return store.dispatch(action)
-    .then(() => asserter(store.getActions()))
+const dispatchAndAssert = async (action, asserter) => {
+  const store = mockStore({})
+  await store.dispatch(action)
+  asserter(store.getActions())
 }
 
