@@ -14,7 +14,7 @@
     "test": "export NODE_PATH=./src && jest --runInBand --watch",
     "test-ci": "export NODE_PATH=./src && jest --runInBand",
     "lint": "eslint src/ test/",
-    "test-coverage": "npm test-ci && codecov"
+    "test-coverage": "yarn test-ci && codecov"
   },
   "devDependencies": {
     "babel-cli": "^6.0.0",
