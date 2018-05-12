@@ -12,7 +12,7 @@ export const dataService = store => next => action => {
   return isApiCall(action) ? callEndpoint(store, action, next) : Promise.resolve()
 }
 
-function callEndpoint(store, action, next) {
+const callEndpoint = (store, action, next) => {
   next(onRequestActionCreator(action))
 
   return doCallEndpoint(

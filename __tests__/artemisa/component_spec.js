@@ -43,7 +43,7 @@ const MyComponentWithFetches = fetchingData({
 describe('Artemisa fetchingData() HOC', () => {
 
   afterEach(() => {
-    nock.cleanAll();
+    nock.cleanAll()
   })
 
   describe('basic mount - action dispatching', () => {

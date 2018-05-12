@@ -35,7 +35,7 @@ describe('Core Service', () => {
 
     return dispatchAndAssert(
       { type: 'GET_WEATHER', dataApiCall: call('GET', 'weather') },
-      (actions) =>
+      actions =>
         expect(actions.find(
            a => a.type === 'GET_WEATHER_REQUEST' && a.apiCallType === ApiCallType.REQUEST)
         ).toBeTruthy()
@@ -179,9 +179,9 @@ describe('Core Service', () => {
 
 })
 
-function dispatchAndAssert(action, asserter) {
-  const store = mockStore({});
-  return store.dispatch(action)
-    .then(() => asserter(store.getActions()))
+const dispatchAndAssert = async (action, asserter) => {
+  const store = mockStore({})
+  await store.dispatch(action)
+  asserter(store.getActions())
 }
 

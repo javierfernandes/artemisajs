@@ -1,5 +1,5 @@
 # http://devcenter.wercker.com/docs/containers/index.html
-box: node:6
+box: node:9
 
 build:
   steps:  
