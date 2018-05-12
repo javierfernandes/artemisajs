@@ -14,7 +14,7 @@ describe('Core Service', () => {
     nock('http://artemisajs.org/')
       .get('/ok')
       .reply(200, { blah: 'ok' })
-  });
+  })
 
   afterEach(() => {
     nock.cleanAll();

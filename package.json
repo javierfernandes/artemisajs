@@ -11,8 +11,8 @@
   "scripts": {
     "build": "babel index.babel.js --out-file index.js && babel src --out-dir lib",
     "prepublish": "npm run build",
-    "test": "export NODE_PATH=./src && jest --env=jsdom --runInBand --watch",
-    "test-ci": "export NODE_PATH=./src && jest --env=jsdom --runInBand",
+    "test": "export NODE_PATH=./src && jest --runInBand --watch",
+    "test-ci": "export NODE_PATH=./src && jest --runInBand",
     "lint": "eslint src/ test/",
     "test-coverage": "yarn test-ci && codecov"
   },
