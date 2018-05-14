@@ -51,6 +51,8 @@ function doCallEndpoint(callSpec, next, onReceive, onError, store) {
       // }
       (response.ok
         ? response.json().then(json => next(transformReceiveAction(onReceive((json)), store)))
+        // TODO: error parsing should be configurable globally (here we assume that a json object comes
+        // with { error: { message } }
         : response.json().then(json => next(onError(json.error.message))))
     )
     .catch(error => {

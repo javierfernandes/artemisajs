@@ -69,16 +69,36 @@ describe('Core Service', () => {
     )
   })
 
-  it('should dispatch an ERROR action if endpoint fails (not configured in nock)', () => {
-    return dispatchAndAssert(
-      { type: 'GET_WEATHER', dataApiCall: { method: 'GET', path: 'blah' } },
-      actions =>
-        expect(actions).toEqual([
-          { type: 'GET_WEATHER', dataApiCall: { method: 'GET', path: 'blah' } },
-          { type: 'GET_WEATHER_REQUEST', originType: 'GET_WEATHER', apiCallType: ApiCallType.REQUEST, path: 'blah' },
-          { type: 'GET_WEATHER_ERROR', originType: 'GET_WEATHER', apiCallType: ApiCallType.ERROR, error: 'request to http://artemisajs.org/blah failed, reason: Nock: No match for request GET http://artemisajs.org/blah ', path: 'blah' }
-        ])
-    )
+  describe('error handling', () => {
+
+    it('should dispatch an ERROR action if endpoint fails (not configured in nock)', () => {
+      return dispatchAndAssert(
+        { type: 'GET_WEATHER', dataApiCall: { method: 'GET', path: 'blah' } },
+        actions =>
+          expect(actions).toEqual([
+            { type: 'GET_WEATHER', dataApiCall: { method: 'GET', path: 'blah' } },
+            { type: 'GET_WEATHER_REQUEST', originType: 'GET_WEATHER', apiCallType: ApiCallType.REQUEST, path: 'blah' },
+            { type: 'GET_WEATHER_ERROR', originType: 'GET_WEATHER', apiCallType: ApiCallType.ERROR, error: 'request to http://artemisajs.org/blah failed, reason: Nock: No match for request GET http://artemisajs.org/blah ', path: 'blah' }
+          ])
+      )
+    })
+  
+    it('should dispatch an ERROR server response is 500', () => {
+      nock('http://artemisajs.org/')
+      .get('/blah')
+      .reply(500, { error: { message: 'Something went really wrong' } })
+
+      return dispatchAndAssert(
+        { type: 'GET_WEATHER', dataApiCall: { method: 'GET', path: 'blah' } },
+        actions =>
+          expect(actions).toEqual([
+            { type: 'GET_WEATHER', dataApiCall: { method: 'GET', path: 'blah' } },
+            { type: 'GET_WEATHER_REQUEST', originType: 'GET_WEATHER', apiCallType: ApiCallType.REQUEST, path: 'blah' },
+            { type: 'GET_WEATHER_ERROR', originType: 'GET_WEATHER', apiCallType: ApiCallType.ERROR, error: 'Something went really wrong', path: 'blah' }
+          ])
+      )
+    })
+
   })
 
   describe('Security', () => {
