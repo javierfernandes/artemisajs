@@ -46,9 +46,7 @@ describe('Artemisa fetchingData() HOC', () => {
     let store = undefined
 
     beforeEach(() => {
-      store = mockStore({
-        artemisa: {}
-      })
+      store = mockStore({ artemisa: {} })
     })
 
     it('mounts correctly', () => {
