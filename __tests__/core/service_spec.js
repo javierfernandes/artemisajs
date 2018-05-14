@@ -1,17 +1,17 @@
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import nock from 'nock';
-import { dataService } from 'core/service'
+import { dataService, DEFAULT_BASE_URL } from 'core/service'
 import { call, get } from 'core/call'
 import { ApiCallType } from 'core/actions'
 
-const middlewares = [thunk, dataService];
+const middlewares = [thunk, dataService()];
 const mockStore = configureMockStore(middlewares);
 
 describe('Core Service', () => {
 
   beforeEach(() => {
-    nock('http://artemisajs.org/')
+    nock(DEFAULT_BASE_URL)
       .get('/ok')
       .reply(200, { blah: 'ok' })
   })
@@ -19,6 +19,14 @@ describe('Core Service', () => {
   afterEach(() => {
     nock.cleanAll();
   })
+
+  const getWeatherOkAsserter = actions => {
+    expect(actions).toEqual([
+      { type: 'GET_WEATHER', dataApiCall: { method: 'GET', path: 'weather' } },
+      { type: 'GET_WEATHER_REQUEST', originType: 'GET_WEATHER', apiCallType: ApiCallType.REQUEST, path: 'weather' },
+      { type: 'GET_WEATHER_RECEIVE', originType: 'GET_WEATHER', apiCallType: ApiCallType.RECEIVE, data: { weather: 'someResponse' }, path: 'weather' }
+    ])
+  }
 
   it('should dispatch the original action', () => (
     dispatchAndAssert(
@@ -28,8 +36,22 @@ describe('Core Service', () => {
     )
   ))
 
+  it('should honor the baseUrl custom configuration', () => {
+    const CUSTOM_BASE_URL = 'https://weather.com'
+    nock(CUSTOM_BASE_URL)
+      .get('/weather')
+      .reply(200, { weather: 'someResponse' })
+    const customDataService = dataService({ call: { baseUrl: CUSTOM_BASE_URL } })
+    const customMockStore = configureMockStore([thunk, customDataService])
+
+    const customStore = customMockStore({});
+    return customStore
+      .dispatch({ type: 'GET_WEATHER', dataApiCall: call('GET', 'weather') })
+      .then(() => getWeatherOkAsserter(customStore.getActions()))
+  })
+
   it('should dispatch an extra action to notify the REQUEST with convention on type', () => {
-    nock('http://artemisajs.org/')
+    nock(DEFAULT_BASE_URL)
       .get('/weather')
       .reply(200, [{ weather: 'someResponse' }])
 
@@ -53,19 +75,13 @@ describe('Core Service', () => {
   })
 
   it('should dispatch a RECEIVE action if request was OK', () => {
-    nock('http://artemisajs.org/')
+    nock(DEFAULT_BASE_URL)
         .get('/weather')
         .reply(200, { weather: 'someResponse' })
 
     return dispatchAndAssert(
       { type: 'GET_WEATHER', dataApiCall: call('GET', 'weather') },
-      actions => {
-        expect(actions).toEqual([
-          { type: 'GET_WEATHER', dataApiCall: { method: 'GET', path: 'weather' } },
-          { type: 'GET_WEATHER_REQUEST', originType: 'GET_WEATHER', apiCallType: ApiCallType.REQUEST, path: 'weather' },
-          { type: 'GET_WEATHER_RECEIVE', originType: 'GET_WEATHER', apiCallType: ApiCallType.RECEIVE, data: { weather: 'someResponse' }, path: 'weather' }
-        ])
-      }
+      getWeatherOkAsserter
     )
   })
 
@@ -78,7 +94,7 @@ describe('Core Service', () => {
           expect(actions).toEqual([
             { type: 'GET_WEATHER', dataApiCall: { method: 'GET', path: 'blah' } },
             { type: 'GET_WEATHER_REQUEST', originType: 'GET_WEATHER', apiCallType: ApiCallType.REQUEST, path: 'blah' },
-            { type: 'GET_WEATHER_ERROR', originType: 'GET_WEATHER', apiCallType: ApiCallType.ERROR, error: 'request to http://artemisajs.org/blah failed, reason: Nock: No match for request GET http://artemisajs.org/blah ', path: 'blah' }
+            { type: 'GET_WEATHER_ERROR', originType: 'GET_WEATHER', apiCallType: ApiCallType.ERROR, error: `request to ${DEFAULT_BASE_URL}/blah failed, reason: Nock: No match for request GET ${DEFAULT_BASE_URL}/blah `, path: 'blah' }
           ])
       )
     })
@@ -104,7 +120,7 @@ describe('Core Service', () => {
   describe('Security', () => {
 
     it('should get the token from the store state)', () => {
-      nock('http://artemisajs.org/', {
+      nock(DEFAULT_BASE_URL, {
         reqheaders: {
           Authorization: 'Bearer abc'
         }
@@ -133,7 +149,7 @@ describe('Core Service', () => {
 
   describe('Transformations', () => {
     it('match and execute a registered transformations for action name', () => {
-      nock('http://artemisajs.org/')
+      nock(DEFAULT_BASE_URL)
       .get('/temperature')
       .reply(200, { temperature: 21 })
 
@@ -162,7 +178,7 @@ describe('Core Service', () => {
     it('uses the store in a registered transformations', () => {
       const celciusT = 21
 
-      nock('http://artemisajs.org/')
+      nock(DEFAULT_BASE_URL)
         .get('/temperature')
         .times(2)
         .reply(200, { temperature: celciusT })
@@ -185,13 +201,13 @@ describe('Core Service', () => {
         ])
 
 
-      const store = mockStore({ farenheit: true });
-      return store.dispatch({ type: 'GET_TEMPERATURE', dataApiCall: theCall })
-        .then(() => storeExpectations(store, expectedTempH))
+      const farenheitTrueStore = mockStore({ farenheit: true });
+      return farenheitTrueStore.dispatch({ type: 'GET_TEMPERATURE', dataApiCall: theCall })
+        .then(() => storeExpectations(farenheitTrueStore, expectedTempH))
         .then(() => {
-          const store = mockStore({ farenheit: false });
-          return store.dispatch({ type: 'GET_TEMPERATURE', dataApiCall: theCall })
-            .then(() => storeExpectations(store, celciusT))
+          const farenheitFalseStore = mockStore({ farenheit: false });
+          return farenheitFalseStore.dispatch({ type: 'GET_TEMPERATURE', dataApiCall: theCall })
+            .then(() => storeExpectations(farenheitFalseStore, celciusT))
         })
     })
 

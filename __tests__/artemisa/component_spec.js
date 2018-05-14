@@ -11,7 +11,7 @@ import { State } from 'core/model'
 import { dataService } from 'core/service'
 import { get, auth } from 'core/call'
 
-const middlewares = [thunk, dataService]
+const middlewares = [thunk, dataService()]
 const mockStore = configureMockStore(middlewares)
 
 class MyComponent extends React.Component {
@@ -101,7 +101,7 @@ describe('Artemisa fetchingData() HOC', () => {
       const reducer = combineReducers({ artemisa, blah })
       store = createStore(reducer, compose(applyMiddleware(
         thunk,
-        dataService
+        dataService()
       )))
     })
 

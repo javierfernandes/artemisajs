@@ -1,14 +1,17 @@
 import isoFetch from 'isomorphic-fetch'
+import { DEFAULT_BASE_URL } from 'core/service'
 
 // HARDCODED: this should be configurable !
+// TODO: remove this as its never imported form anywhere?
 export const LOGOUT = 'LOGOUT'
 
 const isBrowser = () => typeof __IS_BROWSER__ !== typeof undefined
-const getBrowserUrl = (url) => `${location.protocol}//${location.host}/${url}`
+const concatUrl = (base, endUrl) => `${base}/${endUrl}`
+const getBrowserUrl = () => `${location.protocol}//${location.host}`
 
 export function apiFetch(url, options) {
-  const finalUrl = isBrowser() ? getBrowserUrl(url) : `http://artemisajs.org/${url}`
-  return isoFetch(finalUrl, options)
+  const baseUrl = !options.baseUrl && isBrowser() ? getBrowserUrl(url) : options.baseUrl || DEFAULT_BASE_URL
+  return isoFetch(concatUrl(baseUrl, url), options)
 }
 
 export const compileUrl = (path, params = {}) => (typeof(path) === 'string' ? path : path(params))
