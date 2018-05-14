@@ -10,7 +10,7 @@ const concatUrl = (base, endUrl) => `${base}/${endUrl}`
 const getBrowserUrl = () => `${location.protocol}//${location.host}`
 
 export function apiFetch(url, options) {
-  const baseUrl = isBrowser() ? getBrowserUrl(url) : options.baseUrl || DEFAULT_BASE_URL
+  const baseUrl = !options.baseUrl && isBrowser() ? getBrowserUrl(url) : options.baseUrl || DEFAULT_BASE_URL
   return isoFetch(concatUrl(baseUrl, url), options)
 }
 
