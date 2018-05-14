@@ -46,9 +46,10 @@ React components declare data fetching needs by using Artemisa "decorator" funct
 
 ```javascript
 import { fetchingData, isFetching, isError, isFetched } from 'artemisa'
+import { get } from 'artemisa/lib/core/call'
 
 @fetchingData({
-   weather: (props) => get(`/api/weather/${props.city.code}`)
+   weather: props => get(`/api/weather/${props.city.code}`)
 })
 class WeatherChannel extends React.Component {
 
@@ -141,7 +142,7 @@ As the call could depend on other properties you receive the props and as you co
 
 There are some extra props that you can specify for different scenarios
 
-## Transforming
+## Transformations
 
 - **transforming**: an optional function to transform the data when it arrives, and before injecting it into the component. For example to transform some dates from string to objects, etc.
 
@@ -151,7 +152,7 @@ const MyComponentWithFetches = fetchingData({
   weather: {
     name: 'weather',      // key to use on store for cache, now optional
     call: (props, state) => auth(get(`getWeather?city=${state.city}`)),
-    transforming: (value) => toFahrenheit(value)
+    transforming: value => toFahrenheit(value)
   }
 })(MyComponent)
 ```
