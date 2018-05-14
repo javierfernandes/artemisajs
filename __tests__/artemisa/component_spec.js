@@ -3,12 +3,11 @@ import configureMockStore from 'redux-mock-store'
 import { createStore, combineReducers, applyMiddleware, compose } from 'redux'
 import { Provider } from 'react-redux'
 import thunk from 'redux-thunk'
-import nock from 'nock'
-import expect from 'expect'
 import { mount } from 'enzyme'
 import { fetchingData } from 'artemisa/component'
-import { isArtemisaReceive, isArtemisaType } from 'artemisa/dispatch'
+import { isArtemisaReceive } from 'artemisa/dispatch'
 import { artemisa } from 'artemisa/reducer'
+import { State } from 'core/model'
 import { dataService } from 'core/service'
 import { get, auth } from 'core/call'
 
@@ -17,17 +16,18 @@ const mockStore = configureMockStore(middlewares)
 
 class MyComponent extends React.Component {
   render() {
-    if (!this.props.weather) {
+    const { weather } = this.props
+    if (!weather) {
       return <div>Initializing</div>
     }
-    if (this.props.weather.state === 'fetching') {
+    if (weather.state === State.FETCHING) {
       return <div>Fetching</div>
     }
-    if (this.props.weather.state === 'fetched') {
-      return <div>Temperature is {this.props.weather.value.temp}</div>
+    if (weather.state === State.FETCHED) {
+      return <div>Temperature is {weather.value.temp}</div>
     }
     // TODO: error
-    return <div>{this.props.weather}</div>
+    return <div>{JSON.stringify(weather)}</div>
   }
 }
 
@@ -42,17 +42,11 @@ const MyComponentWithFetches = fetchingData({
 
 describe('Artemisa fetchingData() HOC', () => {
 
-  afterEach(() => {
-    nock.cleanAll();
-  })
-
   describe('basic mount - action dispatching', () => {
     let store = undefined
 
     beforeEach(() => {
-      store = mockStore({
-        artemisa: {}
-      })
+      store = mockStore({ artemisa: {} })
     })
 
     it('mounts correctly', () => {
@@ -60,11 +54,11 @@ describe('Artemisa fetchingData() HOC', () => {
         <Provider store={store}>
           <MyComponentWithFetches />
         </Provider>
-      )
+      ).unmount()
     })
 
     it('dispatches the initial action', () => {
-      mount(
+      const c = mount(
         <Provider store={store}>
           <MyComponentWithFetches />
         </Provider>
@@ -86,6 +80,7 @@ describe('Artemisa fetchingData() HOC', () => {
           path: 'getWeather'
         }
       ])
+      c.unmount()
     })
 
   })
@@ -117,15 +112,16 @@ describe('Artemisa fetchingData() HOC', () => {
         </Provider>
       )
       expect(wrapper.html()).toEqual('<div>Fetching</div>')
+      wrapper.unmount()
     })
 
-    it('renders FETCHED using the real store (reducer)', () => {
+    it('renders FETCHED using the real store (reducer)', async () => {
       const wrapper = mount(
         <Provider store={store}>
           <MyComponentWithFetches />
         </Provider>
       )
-      store.dispatch({
+      await store.dispatch({
         type: 'ARTEMISA_theWeather_RECEIVE',
         apiCallType: 'RECEIVE',
         originType: 'ARTEMISA_theWeather',
@@ -133,11 +129,12 @@ describe('Artemisa fetchingData() HOC', () => {
         data: { temp: '23 degrees' }
       })
       expect(wrapper.text()).toEqual('Temperature is 23 degrees')
+      wrapper.unmount()
     })
 
     describe('Optionals', () => {
 
-      it('TRANSFORMING the value to inject the property', () => {
+      it('TRANSFORMING the value to inject the property', async () => {
         const MyComponentWithTransform = fetchingData({
           weather: {
             name: 'theWeather',
@@ -151,7 +148,7 @@ describe('Artemisa fetchingData() HOC', () => {
             <MyComponentWithTransform />
           </Provider>
         )
-        store.dispatch({
+        await store.dispatch({
           type: 'ARTEMISA_theWeather_RECEIVE',
           apiCallType: 'RECEIVE',
           originType: 'ARTEMISA_theWeather',
@@ -159,11 +156,12 @@ describe('Artemisa fetchingData() HOC', () => {
           data: { temp: '23 degrees' }
         })
         expect(wrapper.text()).toEqual('Temperature is 23 DEGREES')
+        wrapper.unmount()
       })
 
       describe('on', () => {
 
-        it('Conditional on() only executes the call if the condition is met (based on STATE)', () => {
+        it('Conditional on() only executes the call if the condition is met (based on STATE)', async () => {
           const MyComponentWithCondition = fetchingData({
             weather: {
               call: (props, state) => auth(get(`getWeather?city=${state.blah.city}`)),
@@ -181,12 +179,13 @@ describe('Artemisa fetchingData() HOC', () => {
           expect(wrapper.text()).toEqual('Initializing')
 
           // change data of condition
-          store.dispatch({
+          await store.dispatch({
             type: 'SET_CITY',
             city: 'Buenos Aires'
           })
 
           expect(wrapper.text()).toEqual('Fetching')
+          wrapper.unmount()
         })
 
         it('Conditional on() only executes the call if the condition is met (based on PROPS)', () => {
@@ -217,6 +216,7 @@ describe('Artemisa fetchingData() HOC', () => {
           // not propagating the rerendering/update to all the inner elements
           wrapper.setProps({ city: 'Buenos Aires' })
           expect(wrapper.text()).toEqual('Fetching')
+          wrapper.unmount()
         })
 
       })
@@ -231,7 +231,7 @@ describe('Artemisa fetchingData() HOC', () => {
           return props.weather && props.weather.value ? (<div>Temperature is {props.weather.value.temp}</div>) : (<div>Nothing</div>)
         }
         const Component = fetchingData({
-          weather: () => auth(get('getWeather'))
+          weather: () => get('getWeather')
         })(SimpleComponent)
 
         const wrapper = mount(
@@ -247,6 +247,7 @@ describe('Artemisa fetchingData() HOC', () => {
           data: { temp: '25 degrees' }
         })
         expect(wrapper.text()).toEqual('Temperature is 25 degrees')
+        wrapper.unmount()
       })
 
       it('support not including "name"', () => {
@@ -254,9 +255,7 @@ describe('Artemisa fetchingData() HOC', () => {
           return props.weather && props.weather.value ? (<div>Temperature is {props.weather.value.temp}</div>) : (<div>Nothing</div>)
         }
         const Component = fetchingData({
-          weather: {
-            call: () => auth(get('getWeather'))
-          }
+          weather: { call: () => auth(get('getWeather')) }
         })(SimpleComponent)
 
         const wrapper = mount(
@@ -272,6 +271,7 @@ describe('Artemisa fetchingData() HOC', () => {
           data: { temp: '25 degrees' }
         })
         expect(wrapper.text()).toEqual('Temperature is 25 degrees')
+        wrapper.unmount()
       })
 
 

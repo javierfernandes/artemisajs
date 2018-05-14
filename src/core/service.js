@@ -7,13 +7,12 @@ import {
 } from './actions'
 import { apiFetch, compileUrl, fetchOptions } from './fetch'
 
-/* eslint no-unused-vars: 0 */
 export const dataService = store => next => action => {
-  next(action)
-  return isApiCall(action) ? callEndpoint(store, action, next) : Promise.resolve()
+  const r = next(action)
+  return isApiCall(action) ? callEndpoint(store, action, next) : Promise.resolve(r)
 }
 
-function callEndpoint(store, action, next) {
+const callEndpoint = (store, action, next) => {
   next(onRequestActionCreator(action))
 
   return doCallEndpoint(
@@ -52,10 +51,12 @@ function doCallEndpoint(callSpec, next, onReceive, onError, store) {
       // }
       (response.ok
         ? response.json().then(json => next(transformReceiveAction(onReceive((json)), store)))
+        // TODO: error parsing should be configurable globally (here we assume that a json object comes
+        // with { error: { message } }
         : response.json().then(json => next(onError(json.error.message))))
     )
     .catch(error => {
-      console.error('ERROR on API Call', error)
+      // console.error('ERROR on API Call', error)
       next(onError(error.message))
     })
 }

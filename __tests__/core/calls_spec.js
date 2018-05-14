@@ -1,4 +1,3 @@
-import expect from 'expect';
 import { call, get, post } from 'core/call'
 
 describe('Core calls factory', () => {

@@ -1,3 +1,4 @@
+import { concat } from 'ramda'
 import { isReceive } from '../core/actions'
 import { isFetchingSlot, isErrorSlot } from '../core/model'
 
@@ -6,17 +7,15 @@ export const isArtemisaType = type => type && !!type.match(/^ARTEMISA/)
 export const isArtemisaReceive = action => isReceive(action) && isArtemisaType(action.originType)
 export const isArtemisaAction = action => isArtemisaType(action.type)
 
-export const actionName = storeFieldName => `${ARTEMISA}_${storeFieldName}`
+export const actionName = concat(`${ARTEMISA}_`)
 
 export const storagePropertyNameForAction = action => action.originType.slice(ARTEMISA.length + 1)
 
 export function dispatchFetches(props, state, dispatch, fetches) {
-  fetches.forEach(fetch => {
-    dispatchFetch(props, state, dispatch, fetch)
-  })
+  fetches.forEach(dispatchFetch(props, state, dispatch))
 }
 
-function dispatchFetch(props, state, dispatch, { storeFieldName, call, on }) {
+const dispatchFetch = (props, state, dispatch) => ({ storeFieldName, call, on }) => {
   if (!on(props, state)) {
     return;
   }
@@ -30,6 +29,7 @@ function dispatchFetch(props, state, dispatch, { storeFieldName, call, on }) {
   }
 }
 
+const defaultKeyProvider = s => s.value.transformerId
 /**
  * If we have a piece state managed by this framework, and the value has a transformerId,
  * this function tells if it is necessary to do a new fetch.
@@ -52,5 +52,5 @@ export function shouldFetch(fetchState, key, keyProvider) {
     return false
   }
 
-  return (keyProvider || (s => s.value.transformerId))(fetchState) !== key
+  return (keyProvider || defaultKeyProvider)(fetchState) !== key
 }
