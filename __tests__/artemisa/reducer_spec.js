@@ -73,4 +73,14 @@ describe('Artemisa reducer', () => {
     })
   })
 
+  it('should fail if it is an unknown ARTEMISA_action', () => {
+    const action = {
+      type: 'ARTEMISA_theWeather_REQUEST',
+      apiCallType: 'FRULA',
+      originType: 'ARTEMISA_theWeather',
+      path: 'getWeather'
+    }
+    expect(() => artemisa(undefined, action)).toThrow('Unknown API action');
+  })
+
 })

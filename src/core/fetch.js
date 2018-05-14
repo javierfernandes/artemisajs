@@ -13,14 +13,22 @@ export function apiFetch(url, options) {
 
 export const compileUrl = (path, params = {}) => (typeof(path) === 'string' ? path : path(params))
 
-export function fetchOptions(method = 'GET', params = {}, authToken) {
+const Method = {
+  GET: 'GET',
+  POST: 'POST',
+  PUT: 'PUT'
+}
+
+export function fetchOptions(method = Method.GET, params = {}, authToken) {
   let headers = authToken ? { Authorization: `Bearer ${authToken}` } : {}
   let body = undefined
 
-  if (method === 'POST' || method === 'PUT') {
+  if (method === Method.POST || method === Method.PUT) {
+    // file here is hardcoded
     if (params.file) {
+      headers['Content-Type'] = 'multipart/form-data'
       body = new FormData()
-      Object.keys(params).forEach((key) => {
+      Object.keys(params).forEach(key => {
         if (key !== 'file') {
           body.append(key, params[key])
         } else {
