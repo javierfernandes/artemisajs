@@ -2,7 +2,7 @@ import expect from 'expect';
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import nock from 'nock';
-import { dataService } from 'core/service'
+import { dataService, DEFAULT_BASE_URL } from 'core/service'
 import { call, get } from 'core/call'
 import { ApiCallType } from 'core/actions'
 
@@ -12,7 +12,7 @@ const mockStore = configureMockStore(middlewares);
 describe('Core Service', () => {
 
   beforeEach(() => {
-    nock('http://artemisajs.org/')
+    nock(DEFAULT_BASE_URL)
       .get('/ok')
       .reply(200, { blah: 'ok' })
   });
@@ -21,6 +21,14 @@ describe('Core Service', () => {
     nock.cleanAll();
   })
 
+  const getWeatherOkAsserter = actions => {
+    expect(actions).toEqual([
+      { type: 'GET_WEATHER', dataApiCall: { method: 'GET', path: 'weather' } },
+      { type: 'GET_WEATHER_REQUEST', originType: 'GET_WEATHER', apiCallType: ApiCallType.REQUEST, path: 'weather' },
+      { type: 'GET_WEATHER_RECEIVE', originType: 'GET_WEATHER', apiCallType: ApiCallType.RECEIVE, data: { weather: 'someResponse' }, path: 'weather' }
+    ])
+  }
+
   it('Should dispatch the original action', () => (
     dispatchAndAssert(
       { type: 'GET_WEATHER' },
@@ -28,6 +36,20 @@ describe('Core Service', () => {
           expect(actions.find(a => a.type === 'GET_WEATHER')).toExist(true)
     )
   ))
+
+  it('should honor the baseUrl custom configuration', () => {
+    const CUSTOM_BASE_URL = 'https://weather.com'
+    nock(CUSTOM_BASE_URL)
+      .get('/weather')
+      .reply(200, { weather: 'someResponse' })
+    const customDataService = dataService({ call: { baseUrl: CUSTOM_BASE_URL } })
+    const customMockStore = configureMockStore([thunk, customDataService])
+
+    const customStore = customMockStore({});
+    return customStore
+      .dispatch({ type: 'GET_WEATHER', dataApiCall: call('GET', 'weather') })
+      .then(() => getWeatherOkAsserter(customStore.getActions()))
+  })
 
   it('Should dispatch an extra action to notify the REQUEST with convention on type', () => {
     nock('http://artemisajs.org/')
@@ -54,19 +76,13 @@ describe('Core Service', () => {
   })
 
   it('Should dispatch a RECEIVE action if request was OK', () => {
-    nock('http://artemisajs.org/')
+    nock(DEFAULT_BASE_URL)
         .get('/weather')
         .reply(200, { weather: 'someResponse' })
 
     return dispatchAndAssert(
       { type: 'GET_WEATHER', dataApiCall: call('GET', 'weather') },
-      actions => {
-        expect(actions).toEqual([
-          { type: 'GET_WEATHER', dataApiCall: { method: 'GET', path: 'weather' } },
-          { type: 'GET_WEATHER_REQUEST', originType: 'GET_WEATHER', apiCallType: ApiCallType.REQUEST, path: 'weather' },
-          { type: 'GET_WEATHER_RECEIVE', originType: 'GET_WEATHER', apiCallType: ApiCallType.RECEIVE, data: { weather: 'someResponse' }, path: 'weather' }
-        ])
-      }
+      getWeatherOkAsserter
     )
   })
 
