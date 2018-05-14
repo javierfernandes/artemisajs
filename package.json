@@ -1,6 +1,6 @@
 {
   "name": "artemisa",
-  "version": "1.0.2-alpha-04",
+  "version": "1.0.3",
   "description": "React/Redux data fetching API",
   "license": "MIT",
   "author": "Javier Fernandes",
