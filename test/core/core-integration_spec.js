@@ -2,17 +2,17 @@ import expect from 'expect';
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import nock from 'nock';
-import { dataService } from 'core/service'
+import { dataService, DEFAULT_BASE_URL } from 'core/service'
 import { call } from 'core/call'
 import { ApiCallType } from 'core/actions'
 
-const middlewares = [thunk, dataService];
+const middlewares = [thunk, dataService()];
 const mockStore = configureMockStore(middlewares);
 
 describe('Core Service - Integration Tests', () => {
 
   beforeEach(() => {
-    nock('http://artemisajs.org/')
+    nock(DEFAULT_BASE_URL)
       .get('/ok')
       .reply(200, { blah: 'ok' })
   });
@@ -22,7 +22,7 @@ describe('Core Service - Integration Tests', () => {
   })
 
   it('Should dispatch an extra action to notify the REQUEST with convention on type', () => {
-    nock('http://artemisajs.org/')
+    nock(DEFAULT_BASE_URL)
       .post('/todoItem')
       .reply(200, [{ status: 'ok' }])
 
