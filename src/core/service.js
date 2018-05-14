@@ -7,17 +7,19 @@ import {
 } from './actions'
 import { apiFetch, compileUrl, fetchOptions } from './fetch'
 
+export const DEFAULT_BASE_URL = 'http://artemisajs.org'
+
 /* eslint no-unused-vars: 0 */
-export const dataService = store => next => action => {
+export const dataService = configOpts => store => next => action => {
   next(action)
-  return isApiCall(action) ? callEndpoint(store, action, next) : Promise.resolve()
+  return isApiCall(action) ? callEndpoint(store, action, next, configOpts) : Promise.resolve()
 }
 
-function callEndpoint(store, action, next) {
+function callEndpoint(store, action, next, configOpts = { call: {} }) {
   next(onRequestActionCreator(action))
 
   return doCallEndpoint(
-    callFromAction(store, action),
+    { ...configOpts.call, ...callFromAction(store, action) },
     next,
     onReceiveActionCreator(action),
     onErrorActionCreator(action),
@@ -43,8 +45,8 @@ const transform = (actionType, value, store) => {
 
 /* eslint-disable no-console */
 function doCallEndpoint(callSpec, next, onReceive, onError, store) {
-  const { method, path, urlParams, body, token } = callSpec
-  return apiFetch(compileUrl(path, urlParams), fetchOptions(method, body, token))
+  const { method, path, urlParams, body, token, baseUrl } = callSpec
+  return apiFetch(compileUrl(path, urlParams), { ...fetchOptions(method, body, token), baseUrl })
     .then(response =>
       // TODO
       // if (response.status === 401) {
