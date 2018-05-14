@@ -1,5 +1,5 @@
 import isoFetch from 'isomorphic-fetch'
-import { DEFAULT_BASE_URL } from 'core/service'
+import { DEFAULT_BASE_URL } from './service'
 
 // HARDCODED: this should be configurable !
 // TODO: remove this as its never imported form anywhere?
