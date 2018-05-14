@@ -19,7 +19,7 @@ export const call = (method, path, urlParams, body, token) => ({
   ...token && { token }
 })
 
-export const get = (path) => ({ method: 'GET', path })
+export const get = path => ({ method: 'GET', path })
 export const post = (path, body) => ({ method: 'POST', path, body })
 
 // This should eventually become an ecmascript decorator function
@@ -27,4 +27,4 @@ export const post = (path, body) => ({ method: 'POST', path, body })
 //
 //  @auth
 //  fetchWeather(city) { ... }
-export const auth = (aCall) => ({ ...aCall, requiresAuthentication: true })
+export const auth = aCall => ({ ...aCall, requiresAuthentication: true })

@@ -1,11 +1,10 @@
-import expect from 'expect';
 import { artemisa } from 'artemisa/reducer';
 
 describe('Artemisa reducer', () => {
 
   it('should return the initial state if state is undefined', () => {
-    const state = artemisa(undefined, {});
-    expect(state).toEqual({});
+    const state = artemisa(undefined, {})
+    expect(state).toEqual({})
   })
 
   it('should do nothing on initial action', () => {
@@ -18,7 +17,7 @@ describe('Artemisa reducer', () => {
         token: undefined
       }
     }
-    const state = artemisa(undefined, action);
+    const state = artemisa(undefined, action)
     expect(state).toEqual({});
   })
 
@@ -54,6 +53,34 @@ describe('Artemisa reducer', () => {
         value: { temp: '23 degrees' }
       }
     })
+  })
+
+  it('should update state on ERROR fetching', () => {
+    const action = {
+      type: 'ARTEMISA_theWeather_ERROR',
+      apiCallType: 'ERROR',
+      originType: 'ARTEMISA_theWeather',
+      path: 'getWeather',
+      error: 'connection problem'
+    }
+    const state = artemisa(undefined, action);
+    expect(state).toEqual({
+      theWeather: {
+        state: 'error',
+        path: 'getWeather',
+        error: 'connection problem'
+      }
+    })
+  })
+
+  it('should fail if it is an unknown ARTEMISA_action', () => {
+    const action = {
+      type: 'ARTEMISA_theWeather_REQUEST',
+      apiCallType: 'FRULA',
+      originType: 'ARTEMISA_theWeather',
+      path: 'getWeather'
+    }
+    expect(() => artemisa(undefined, action)).toThrow('Unknown API action');
   })
 
 })

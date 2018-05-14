@@ -1,4 +1,3 @@
-import expect from 'expect';
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import nock from 'nock';
@@ -15,7 +14,7 @@ describe('Core Service', () => {
     nock(DEFAULT_BASE_URL)
       .get('/ok')
       .reply(200, { blah: 'ok' })
-  });
+  })
 
   afterEach(() => {
     nock.cleanAll();
@@ -29,11 +28,11 @@ describe('Core Service', () => {
     ])
   }
 
-  it('Should dispatch the original action', () => (
+  it('should dispatch the original action', () => (
     dispatchAndAssert(
       { type: 'GET_WEATHER' },
       (actions) =>
-          expect(actions.find(a => a.type === 'GET_WEATHER')).toExist(true)
+          expect(actions.find(a => a.type === 'GET_WEATHER')).toBeTruthy()
     )
   ))
 
@@ -51,21 +50,21 @@ describe('Core Service', () => {
       .then(() => getWeatherOkAsserter(customStore.getActions()))
   })
 
-  it('Should dispatch an extra action to notify the REQUEST with convention on type', () => {
+  it('should dispatch an extra action to notify the REQUEST with convention on type', () => {
     nock(DEFAULT_BASE_URL)
       .get('/weather')
       .reply(200, [{ weather: 'someResponse' }])
 
     return dispatchAndAssert(
       { type: 'GET_WEATHER', dataApiCall: call('GET', 'weather') },
-      (actions) =>
+      actions =>
         expect(actions.find(
            a => a.type === 'GET_WEATHER_REQUEST' && a.apiCallType === ApiCallType.REQUEST)
-        ).toExist()
-    )
+        ).toBeTruthy()
+    );
   })
 
-  it('Should NOT dispatch a REQUEST action if is not an API CALL action', () => {
+  it('should NOT dispatch a REQUEST action if is not an API CALL action', () => {
     return dispatchAndAssert(
       { type: 'GET_WEATHER' },
       actions =>
@@ -75,7 +74,7 @@ describe('Core Service', () => {
     )
   })
 
-  it('Should dispatch a RECEIVE action if request was OK', () => {
+  it('should dispatch a RECEIVE action if request was OK', () => {
     nock(DEFAULT_BASE_URL)
         .get('/weather')
         .reply(200, { weather: 'someResponse' })
@@ -86,21 +85,41 @@ describe('Core Service', () => {
     )
   })
 
-  it('Should dispatch an ERROR action if endpoint fails (not configured in nock)', () => {
-    return dispatchAndAssert(
-      { type: 'GET_WEATHER', dataApiCall: { method: 'GET', path: 'blah' } },
-      actions =>
-        expect(actions).toEqual([
-          { type: 'GET_WEATHER', dataApiCall: { method: 'GET', path: 'blah' } },
-          { type: 'GET_WEATHER_REQUEST', originType: 'GET_WEATHER', apiCallType: ApiCallType.REQUEST, path: 'blah' },
-          { type: 'GET_WEATHER_ERROR', originType: 'GET_WEATHER', apiCallType: ApiCallType.ERROR, error: `request to ${DEFAULT_BASE_URL}/blah failed, reason: Nock: No match for request GET ${DEFAULT_BASE_URL}/blah `, path: 'blah' }
-        ])
-    )
+  describe('error handling', () => {
+
+    it('should dispatch an ERROR action if endpoint fails (not configured in nock)', () => {
+      return dispatchAndAssert(
+        { type: 'GET_WEATHER', dataApiCall: { method: 'GET', path: 'blah' } },
+        actions =>
+          expect(actions).toEqual([
+            { type: 'GET_WEATHER', dataApiCall: { method: 'GET', path: 'blah' } },
+            { type: 'GET_WEATHER_REQUEST', originType: 'GET_WEATHER', apiCallType: ApiCallType.REQUEST, path: 'blah' },
+            { type: 'GET_WEATHER_ERROR', originType: 'GET_WEATHER', apiCallType: ApiCallType.ERROR, error: `request to ${DEFAULT_BASE_URL}/blah failed, reason: Nock: No match for request GET ${DEFAULT_BASE_URL}/blah `, path: 'blah' }
+          ])
+      )
+    })
+  
+    it('should dispatch an ERROR server response is 500', () => {
+      nock('http://artemisajs.org/')
+      .get('/blah')
+      .reply(500, { error: { message: 'Something went really wrong' } })
+
+      return dispatchAndAssert(
+        { type: 'GET_WEATHER', dataApiCall: { method: 'GET', path: 'blah' } },
+        actions =>
+          expect(actions).toEqual([
+            { type: 'GET_WEATHER', dataApiCall: { method: 'GET', path: 'blah' } },
+            { type: 'GET_WEATHER_REQUEST', originType: 'GET_WEATHER', apiCallType: ApiCallType.REQUEST, path: 'blah' },
+            { type: 'GET_WEATHER_ERROR', originType: 'GET_WEATHER', apiCallType: ApiCallType.ERROR, error: 'Something went really wrong', path: 'blah' }
+          ])
+      )
+    })
+
   })
 
   describe('Security', () => {
 
-    it('Should get the token from the store state)', () => {
+    it('should get the token from the store state)', () => {
       nock(DEFAULT_BASE_URL, {
         reqheaders: {
           Authorization: 'Bearer abc'
@@ -196,9 +215,9 @@ describe('Core Service', () => {
 
 })
 
-function dispatchAndAssert(action, asserter) {
-  const store = mockStore({});
-  return store.dispatch(action)
-    .then(() => asserter(store.getActions()))
+const dispatchAndAssert = async (action, asserter) => {
+  const store = mockStore({})
+  await store.dispatch(action)
+  asserter(store.getActions())
 }
 

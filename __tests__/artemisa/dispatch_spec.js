@@ -1,4 +1,3 @@
-import expect from 'expect'
 import { isArtemisaType, shouldFetch } from 'artemisa/dispatch'
 
 describe('isArtemisaType', () => {
@@ -16,7 +15,7 @@ describe('isArtemisaType', () => {
   })
   it('does not break if no parameters are passed', () => {
     isArtemisaType()
-    expect(isArtemisaType).toNotThrow()
+    expect(isArtemisaType).not.toThrow()
   })
 })
 

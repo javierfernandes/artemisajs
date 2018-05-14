@@ -9,13 +9,12 @@ import { apiFetch, compileUrl, fetchOptions } from './fetch'
 
 export const DEFAULT_BASE_URL = 'http://artemisajs.org'
 
-/* eslint no-unused-vars: 0 */
 export const dataService = configOpts => store => next => action => {
-  next(action)
-  return isApiCall(action) ? callEndpoint(store, action, next, configOpts) : Promise.resolve()
+  const r = next(action)
+  return isApiCall(action) ? callEndpoint(store, action, next, configOpts) : Promise.resolve(r)
 }
 
-function callEndpoint(store, action, next, configOpts = { call: {} }) {
+const callEndpoint = (store, action, next, configOpts = { call: {} }) => {
   next(onRequestActionCreator(action))
 
   return doCallEndpoint(
@@ -54,10 +53,12 @@ function doCallEndpoint(callSpec, next, onReceive, onError, store) {
       // }
       (response.ok
         ? response.json().then(json => next(transformReceiveAction(onReceive((json)), store)))
+        // TODO: error parsing should be configurable globally (here we assume that a json object comes
+        // with { error: { message } }
         : response.json().then(json => next(onError(json.error.message))))
     )
     .catch(error => {
-      console.error('ERROR on API Call', error)
+      // console.error('ERROR on API Call', error)
       next(onError(error.message))
     })
 }

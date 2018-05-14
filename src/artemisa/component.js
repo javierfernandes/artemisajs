@@ -1,8 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { State } from '../core/model'
+import { isFetchedSlot } from '../core/model'
 import { isFunction, trueFn, identity } from '../util/function'
-import { properties, hasValueInKey } from '../util/object'
 import { dispatchFetches } from './dispatch'
 
 /**
@@ -42,7 +41,7 @@ class AbstractWithFetches extends React.Component {
 
   mapFetchToProp({ storeFieldName, transforming }, state) {
     const stateValue = state.artemisa[storeFieldName]
-    return hasValueInKey(stateValue, 'state', State.FETCHED) ? { ...stateValue, value: transforming(stateValue.value) } : stateValue
+    return isFetchedSlot(stateValue) ? { ...stateValue, value: transforming(stateValue.value) } : stateValue
   }
 
 }
@@ -56,7 +55,7 @@ class AbstractWithFetches extends React.Component {
  *    transforming: optional transformation
  * }
  */
-const createFetchDescriptors = fetches => properties(fetches).map(({ name, value }) => (
+const createFetchDescriptors = fetches => Object.entries(fetches).map(([name, value]) => (
   {
     propName: name,
     storeFieldName: value.name || name,     // defaults to propName
@@ -75,13 +74,11 @@ const createFetchDescriptors = fetches => properties(fetches).map(({ name, value
 export const fetchingData = fetches => WrappedComponent => {
   const fetchDescriptors = createFetchDescriptors(fetches)
   class WithFetches extends AbstractWithFetches {
-    getFetches() { return fetchDescriptors }
-    getWrappedComponent() { return WrappedComponent }
+    getFetches = () => fetchDescriptors
+    getWrappedComponent = () => WrappedComponent
   }
-  WithFetches.displayName = `WithFetches(${getDisplayName(WrappedComponent)})`;
+  WithFetches.displayName = `WithFetches(${getDisplayName(WrappedComponent)})`
   return connect(state => ({ state }), dispatch => ({ dispatch }))(WithFetches)
 }
 
-function getDisplayName(WrappedComponent) {
-  return WrappedComponent.displayName || WrappedComponent.name || 'Component';
-}
+const getDisplayName = WrappedComponent => WrappedComponent.displayName || WrappedComponent.name || 'Component'

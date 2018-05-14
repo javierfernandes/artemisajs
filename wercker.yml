@@ -1,5 +1,5 @@
 # http://devcenter.wercker.com/docs/containers/index.html
-box: node:6
+box: node:9
 
 build:
   steps:  
@@ -25,17 +25,7 @@ build:
     - script:
         name: run tests and coverage
         code: |
-          yarn coverage-test
-
-    - script:
-        name: generate coverage report
-        code: |
-          yarn coverage-report
-
-    - script:
-        name: upload coverage report
-        code: |
-          yarn coverage-upload
+          yarn test-coverage
 
     - script:
         name: cleanup dev dependencies

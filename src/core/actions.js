@@ -1,10 +1,12 @@
+import { flip, concat, propEq } from 'ramda'
 //
 // Action creators
 //
 
-export const requestTypeFor = type => `${type}_REQUEST`
-export const receiveTypeFor = type => `${type}_RECEIVE`
-export const errorTypeFor = type => `${type}_ERROR`
+const suffix = flip(concat)
+export const requestTypeFor = suffix('_REQUEST')
+export const receiveTypeFor = suffix('_RECEIVE')
+export const errorTypeFor = suffix('_ERROR')
 
 export const ApiCallType = {
   REQUEST: 'REQUEST',
@@ -24,7 +26,6 @@ export const onReceiveActionCreator = action => data => ({
   ...actionCreator(ApiCallType.RECEIVE, receiveTypeFor)(action),
   data
 })
-
 export const onErrorActionCreator = action => error => ({
   ...actionCreator(ApiCallType.ERROR, errorTypeFor)(action),
   error
@@ -32,6 +33,7 @@ export const onErrorActionCreator = action => error => ({
 
 /** Gets the "call" object from an action, populating the token if necesary */
 export const callFromAction = (store, action) => {
+  // TODO: this should be an optional "middleware"
   const call = action.dataApiCall
   if (call.requiresAuthentication) {
     call.token = getAuthToken(store.getState())
@@ -53,7 +55,7 @@ export const isApiCall = action => action.dataApiCall
 
 export const isDerivedActionFor = (action, apiActionType) => action.originType === apiActionType
 
-const isApiCallOfType = expected => action => action.apiCallType === expected
+const isApiCallOfType = propEq('apiCallType')
 export const isRequest = isApiCallOfType(ApiCallType.REQUEST)
 export const isReceive = isApiCallOfType(ApiCallType.RECEIVE)
 export const isError = isApiCallOfType(ApiCallType.ERROR)
